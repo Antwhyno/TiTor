@@ -1,0 +1,36 @@
+name: organizer_app
+description: "Application d'organisation par boîtes colorées, groupes et chronomètres."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Gestion d'état (pattern BLoC)
+  flutter_bloc: ^8.1.5
+  equatable: ^2.0.5
+
+  # Persistance locale
+  sqflite: ^2.3.3
+  path: ^1.9.0
+
+  # Utilitaires
+  uuid: ^4.4.0
+  intl: ^0.19.0
+
+  # Réservé aux futures fonctionnalités de synchronisation distante
+  # (voir data/box_repository.dart -> syncWithRemote)
+  http: ^1.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
