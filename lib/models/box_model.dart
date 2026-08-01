@@ -77,6 +77,7 @@ class BoxModel {
     int? iconCodePoint,
     String? iconFontFamily,
     String? iconFontPackage,
+    bool clearIconFontPackage = false,
     BoxColorType? color,
     String? groupId,
     bool clearGroup = false,
@@ -88,7 +89,9 @@ class BoxModel {
       name: name ?? this.name,
       iconCodePoint: iconCodePoint ?? this.iconCodePoint,
       iconFontFamily: iconFontFamily ?? this.iconFontFamily,
-      iconFontPackage: iconFontPackage ?? this.iconFontPackage,
+      iconFontPackage: clearIconFontPackage
+          ? null
+          : (iconFontPackage ?? this.iconFontPackage),
       color: color ?? this.color,
       groupId: clearGroup ? null : (groupId ?? this.groupId),
       createdAt: createdAt ?? this.createdAt,
@@ -139,14 +142,35 @@ class BoxModel {
       throw FormatException('Dates de boîte invalides : $map');
     }
 
+    final Object? rawIconCodePoint = map['icon_code_point'];
+    final Object? rawIconFontFamily = map['icon_font_family'];
+    final Object? rawIconFontPackage = map['icon_font_package'];
+    final Object? rawColor = map['color'];
+    final Object? rawGroupId = map['group_id'];
+
+    if (rawIconCodePoint != null && rawIconCodePoint is! int ||
+        rawIconFontFamily != null && rawIconFontFamily is! String ||
+        rawIconFontPackage != null && rawIconFontPackage is! String ||
+        rawColor is! String ||
+        rawGroupId != null && rawGroupId is! String) {
+      throw FormatException('Champs de boîte invalides : $map');
+    }
+
+    final bool validColor = BoxColorType.values.any(
+      (BoxColorType type) => type.storageValue == rawColor,
+    );
+    if (!validColor) {
+      throw FormatException('Couleur de boîte invalide : $map');
+    }
+
     return BoxModel(
       id: rawId,
       name: rawName,
-      iconCodePoint: (map['icon_code_point'] as int?) ?? Icons.inbox.codePoint,
-      iconFontFamily: (map['icon_font_family'] as String?) ?? 'MaterialIcons',
-      iconFontPackage: map['icon_font_package'] as String?,
-      color: BoxColorType.fromStorageValue(map['color'] as String?),
-      groupId: map['group_id'] as String?,
+      iconCodePoint: rawIconCodePoint as int? ?? Icons.inbox.codePoint,
+      iconFontFamily: rawIconFontFamily as String? ?? 'MaterialIcons',
+      iconFontPackage: rawIconFontPackage as String?,
+      color: BoxColorType.fromStorageValue(rawColor),
+      groupId: rawGroupId as String?,
       createdAt: createdAt,
       expiresAt: expiresAt,
     );

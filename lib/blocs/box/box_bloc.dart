@@ -112,6 +112,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
         iconCodePoint: event.icon.codePoint,
         iconFontFamily: event.icon.fontFamily ?? 'MaterialIcons',
         iconFontPackage: event.icon.fontPackage,
+        clearIconFontPackage: event.icon.fontPackage == null,
         groupId: event.groupId,
         clearGroup: event.clearGroup,
       );
