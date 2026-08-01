@@ -3,9 +3,7 @@ import 'box_color_type.dart';
 
 /// Modèle représentant une boîte de l'application.
 ///
-/// Une boîte possède un nom, une icône, une couleur (qui détermine la
-/// durée de son chronomètre), une date de création, une date
-/// d'expiration calculée, et peut appartenir à un groupe.
+/// Encapsule les données d'une boîte ainsi que ses invariants métier.
 @immutable
 class BoxModel {
   final String id;
@@ -18,7 +16,7 @@ class BoxModel {
   final DateTime createdAt;
   final DateTime expiresAt;
 
-  const BoxModel({
+  BoxModel({
     required this.id,
     required this.name,
     required this.iconCodePoint,
@@ -28,7 +26,21 @@ class BoxModel {
     this.groupId,
     required this.createdAt,
     required this.expiresAt,
-  });
+  }) {
+    // Validation des invariants (Programmation défensive)
+    if (id.trim().isEmpty) {
+      throw ArgumentError(
+          'L\'identifiant (id) de la boîte ne peut pas être vide.');
+    }
+    if (name.trim().isEmpty) {
+      throw ArgumentError('Le nom de la boîte ne peut pas être vide.');
+    }
+    if (expiresAt.isBefore(createdAt)) {
+      throw ArgumentError(
+        'La date d\'expiration ($expiresAt) ne peut pas être antérieure à la date de création ($createdAt).',
+      );
+    }
+  }
 
   /// Crée une nouvelle boîte en calculant automatiquement sa date
   /// d'expiration à partir de la durée associée à la couleur choisie.
@@ -55,6 +67,8 @@ class BoxModel {
   }
 
   /// Icône reconstituée pour l'affichage à partir des champs stockés.
+  /// Les avertissements de type "non-constant" sont normaux et attendus
+  /// car les arguments proviennent de variables d'instance.
   IconData get icon => IconData(
         iconCodePoint,
         fontFamily: iconFontFamily,
@@ -62,44 +76,56 @@ class BoxModel {
       );
 
   /// Temps restant avant expiration du chronomètre.
-  /// Peut être négatif si le délai est déjà dépassé.
   Duration remaining({DateTime? now}) {
     final DateTime reference = now ?? DateTime.now();
     return expiresAt.difference(reference);
   }
 
   /// Indique si le chronomètre de la boîte est arrivé à expiration.
-  bool isExpired({DateTime? now}) => remaining(now: now).isNegative;
+  /// Retourne true si le temps restant est inférieur ou égal à 0.
+  bool isExpired({DateTime? now}) => remaining(now: now) <= Duration.zero;
 
+  /// Crée une copie de l'instance en modifiant certains champs.
+  ///
+  /// Utilisez [clearFontPackage] à true pour effacer explicitement le package d'icône.
+  /// Utilisez [clearGroup] à true pour effacer l'association à un groupe.
   BoxModel copyWith({
     String? id,
     String? name,
     int? iconCodePoint,
     String? iconFontFamily,
     String? iconFontPackage,
-    bool clearIconFontPackage = false,
+    bool clearFontPackage = false,
     BoxColorType? color,
     String? groupId,
     bool clearGroup = false,
     DateTime? createdAt,
     DateTime? expiresAt,
   }) {
+    final BoxColorType newColor = color ?? this.color;
+
+    // Si la couleur change et qu'aucune date d'expiration explicite n'est fournie,
+    // la date d'expiration est automatiquement recalculée à partir de maintenant.
+    DateTime newExpiresAt = expiresAt ?? this.expiresAt;
+    if (color != null && color != this.color && expiresAt == null) {
+      newExpiresAt = DateTime.now().add(newColor.reminderDuration);
+    }
+
     return BoxModel(
       id: id ?? this.id,
       name: name ?? this.name,
       iconCodePoint: iconCodePoint ?? this.iconCodePoint,
       iconFontFamily: iconFontFamily ?? this.iconFontFamily,
-      iconFontPackage: clearIconFontPackage
-          ? null
-          : (iconFontPackage ?? this.iconFontPackage),
-      color: color ?? this.color,
+      iconFontPackage:
+          clearFontPackage ? null : (iconFontPackage ?? this.iconFontPackage),
+      color: newColor,
       groupId: clearGroup ? null : (groupId ?? this.groupId),
       createdAt: createdAt ?? this.createdAt,
-      expiresAt: expiresAt ?? this.expiresAt,
+      expiresAt: newExpiresAt,
     );
   }
 
-  /// Change la couleur de la boîte et recalcule sa date d'expiration.
+  /// Recalcule la date d'expiration d'urgence après un changement de couleur.
   BoxModel withColor(BoxColorType newColor, {DateTime? changedAt}) {
     final DateTime reference = changedAt ?? DateTime.now();
     return copyWith(
@@ -122,55 +148,60 @@ class BoxModel {
     };
   }
 
-  /// Reconstruit une [BoxModel] à partir d'une ligne de base de données.
+  /// Reconstruit une [BoxModel] depuis une Map (base de données) avec parsing défensif.
   factory BoxModel.fromMap(Map<String, Object?> map) {
+    // 1. Validation de l'id
     final Object? rawId = map['id'];
+    if (rawId is! String || rawId.trim().isEmpty) {
+      throw FormatException(
+          'Champ obligatoire "id" invalide ou manquant dans la Map: $map');
+    }
+
+    // 2. Validation du nom
     final Object? rawName = map['name'];
-
-    if (rawId is! String || rawName is! String) {
-      throw FormatException('Données de boîte invalides : $map');
+    if (rawName is! String || rawName.trim().isEmpty) {
+      throw FormatException(
+          'Champ obligatoire "name" invalide ou manquant dans la Map: $map');
     }
 
+    // 3. Extraction sécurisée du codePoint d'icône
+    final Object? rawCodePoint = map['icon_code_point'];
+    final int iconCodePoint = rawCodePoint is int
+        ? rawCodePoint
+        : (rawCodePoint is String
+            ? int.tryParse(rawCodePoint) ?? Icons.inbox.codePoint
+            : Icons.inbox.codePoint);
+
+    // 4. Extraction des chaînes optionnelles / secondaires
+    final String iconFontFamily =
+        (map['icon_font_family'] as String?) ?? 'MaterialIcons';
+    final String? iconFontPackage = map['icon_font_package'] as String?;
+    final String? groupId = map['group_id'] as String?;
+
+    // 5. Extraction des dates avec repli sécurisé
     final Object? rawCreatedAt = map['created_at'];
+    final DateTime createdAt = rawCreatedAt is String
+        ? DateTime.tryParse(rawCreatedAt) ?? DateTime.now()
+        : DateTime.now();
+
     final Object? rawExpiresAt = map['expires_at'];
+    final DateTime expiresAt = rawExpiresAt is String
+        ? DateTime.tryParse(rawExpiresAt) ??
+            createdAt.add(const Duration(days: 1))
+        : createdAt.add(const Duration(days: 1));
 
-    final DateTime? createdAt =
-        rawCreatedAt is String ? DateTime.tryParse(rawCreatedAt) : null;
-    final DateTime? expiresAt =
-        rawExpiresAt is String ? DateTime.tryParse(rawExpiresAt) : null;
-    if (createdAt == null || expiresAt == null) {
-      throw FormatException('Dates de boîte invalides : $map');
-    }
-
-    final Object? rawIconCodePoint = map['icon_code_point'];
-    final Object? rawIconFontFamily = map['icon_font_family'];
-    final Object? rawIconFontPackage = map['icon_font_package'];
-    final Object? rawColor = map['color'];
-    final Object? rawGroupId = map['group_id'];
-
-    if (rawIconCodePoint != null && rawIconCodePoint is! int ||
-        rawIconFontFamily != null && rawIconFontFamily is! String ||
-        rawIconFontPackage != null && rawIconFontPackage is! String ||
-        rawColor is! String ||
-        rawGroupId != null && rawGroupId is! String) {
-      throw FormatException('Champs de boîte invalides : $map');
-    }
-
-    final bool validColor = BoxColorType.values.any(
-      (BoxColorType type) => type.storageValue == rawColor,
-    );
-    if (!validColor) {
-      throw FormatException('Couleur de boîte invalide : $map');
-    }
+    // 6. Extraction de la couleur
+    final BoxColorType color =
+        BoxColorType.fromStorageValue(map['color'] as String?);
 
     return BoxModel(
       id: rawId,
       name: rawName,
-      iconCodePoint: rawIconCodePoint as int? ?? Icons.inbox.codePoint,
-      iconFontFamily: rawIconFontFamily as String? ?? 'MaterialIcons',
-      iconFontPackage: rawIconFontPackage as String?,
-      color: BoxColorType.fromStorageValue(rawColor),
-      groupId: rawGroupId as String?,
+      iconCodePoint: iconCodePoint,
+      iconFontFamily: iconFontFamily,
+      iconFontPackage: iconFontPackage,
+      color: color,
+      groupId: groupId,
       createdAt: createdAt,
       expiresAt: expiresAt,
     );
@@ -178,9 +209,7 @@ class BoxModel {
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
+    if (identical(this, other)) return true;
     return other is BoxModel && other.id == id;
   }
 
