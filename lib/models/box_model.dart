@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'box_color_type.dart';
+import 'package:flutter/material.dart';
+import 'box_color_type.dart';
+import '../utils/icon_catalog.dart';
 
 /// Modèle représentant une boîte de l'application.
 ///
@@ -70,11 +73,7 @@ class BoxModel {
   ///
   /// Note : Pas de mot-clé `const` ici car les arguments sont des
   /// propriétés d'instance évaluées dynamiquement à l'exécution.
-  IconData get icon => IconData(
-        iconCodePoint,
-        fontFamily: iconFontFamily,
-        fontPackage: iconFontPackage,
-      );
+  IconData get icon => IconCatalog.findByCodePoint(iconCodePoint);
 
   /// Temps restant avant expiration du chronomètre.
   Duration remaining({DateTime? now}) {

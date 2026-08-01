@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 /// Catalogue fermé d'icônes proposées à l'utilisateur pour représenter
 /// une boîte.
 ///
-/// Utiliser un ensemble fermé d'[IconData] `const` permet de conserver
-/// le "tree-shaking" des polices d'icônes activé lors de la
-/// compilation en mode release. Comme les boîtes stockent le
-/// `codePoint` de l'icône choisie et la reconstruisent dynamiquement
-/// (voir `BoxModel.icon`), il est nécessaire de compiler avec le
-/// drapeau `--no-tree-shake-icons` (voir README.md) pour garantir que
-/// toutes les icônes du catalogue restent disponibles au runtime.
+/// On utilise un ensemble fermé d'[IconData] `const` : cela permet à
+/// Flutter de continuer à "tree-shaker" les polices d'icônes en mode
+/// release. Une boîte ne stocke que le `codePoint` de l'icône choisie ;
+/// `BoxModel.icon` retrouve l'[IconData] correspondante via
+/// [findByCodePoint] au lieu de la reconstruire dynamiquement.
 class IconCatalog {
   const IconCatalog._();
 
@@ -36,6 +34,17 @@ class IconCatalog {
     Icons.attach_money,
   ];
 
-  /// Icône utilisée par défaut lorsque l'utilisateur n'en choisit pas.
+  /// Icône utilisée par défaut lorsque l'utilisateur n'en choisit pas,
+  /// ou lorsque le codePoint stocké ne correspond à aucune icône du
+  /// catalogue (donnée corrompue, icône retirée depuis, etc.).
   static const IconData fallback = Icons.inbox;
+
+  /// Retrouve l'[IconData] `const` du catalogue dont le `codePoint`
+  /// correspond à [codePoint], ou [fallback] si rien ne correspond.
+  static IconData findByCodePoint(int codePoint) {
+    for (final IconData icon in options) {
+      if (icon.codePoint == codePoint) return icon;
+    }
+    return fallback;
+  }
 }
