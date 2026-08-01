@@ -51,18 +51,21 @@ class BoxGroupModel {
     final Object? rawId = map['id'];
     final Object? rawName = map['name'];
 
-    if (rawId == null || rawName == null) {
+    if (rawId is! String || rawName is! String) {
       throw FormatException('Données de groupe invalides : $map');
     }
 
     final Object? rawCreatedAt = map['created_at'];
+    final DateTime? createdAt =
+        rawCreatedAt is String ? DateTime.tryParse(rawCreatedAt) : null;
+    if (createdAt == null) {
+      throw FormatException('Date de groupe invalide : $map');
+    }
 
     return BoxGroupModel(
-      id: rawId as String,
-      name: rawName as String,
-      createdAt: rawCreatedAt is String
-          ? DateTime.tryParse(rawCreatedAt) ?? DateTime.now()
-          : DateTime.now(),
+      id: rawId,
+      name: rawName,
+      createdAt: createdAt,
     );
   }
 

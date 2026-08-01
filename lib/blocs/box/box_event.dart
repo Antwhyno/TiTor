@@ -39,6 +39,7 @@ class UpdateBoxRequested extends BoxEvent {
   final String boxId;
   final String name;
   final IconData icon;
+  final BoxColorType color;
   final String? groupId;
   final bool clearGroup;
 
@@ -46,12 +47,14 @@ class UpdateBoxRequested extends BoxEvent {
     required this.boxId,
     required this.name,
     required this.icon,
+    required this.color,
     this.groupId,
     this.clearGroup = false,
   });
 
   @override
-  List<Object?> get props => <Object?>[boxId, name, icon, groupId, clearGroup];
+  List<Object?> get props =>
+      <Object?>[boxId, name, icon, color, groupId, clearGroup];
 }
 
 /// Demande le changement de couleur d'une boîte : recalcule

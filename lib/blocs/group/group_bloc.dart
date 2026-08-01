@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/app_exceptions.dart';
-import '../../data/box_repository.dart';
 import '../../data/group_repository.dart';
 import '../../models/box_group_model.dart';
 import 'group_event.dart';
@@ -16,16 +15,16 @@ import 'group_state.dart';
 /// afin de ne jamais perdre de données utilisateur.
 class GroupBloc extends Bloc<GroupEvent, GroupState> {
   final GroupRepository _groupRepository;
-  final BoxRepository _boxRepository;
   final Uuid _uuid;
+  final void Function()? _onBoxesChanged;
 
   GroupBloc({
     GroupRepository? groupRepository,
-    BoxRepository? boxRepository,
     Uuid? uuid,
+    void Function()? onBoxesChanged,
   })  : _groupRepository = groupRepository ?? GroupRepository(),
-        _boxRepository = boxRepository ?? BoxRepository(),
         _uuid = uuid ?? const Uuid(),
+        _onBoxesChanged = onBoxesChanged,
         super(const GroupInitial()) {
     on<LoadGroups>(_onLoadGroups);
     on<AddGroupRequested>(_onAddGroupRequested);
@@ -136,8 +135,8 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   ) async {
     final List<BoxGroupModel> groups = _currentGroups;
     try {
-      await _boxRepository.detachFromGroup(event.groupId);
-      await _groupRepository.delete(event.groupId);
+      await _groupRepository.detachBoxesAndDelete(event.groupId);
+      _onBoxesChanged?.call();
       final List<BoxGroupModel> newGroups = groups
           .where((BoxGroupModel group) => group.id != event.groupId)
           .toList();

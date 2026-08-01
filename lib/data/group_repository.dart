@@ -81,4 +81,32 @@ class GroupRepository {
       );
     }
   }
+
+  Future<void> detachBoxesAndDelete(String groupId) async {
+    try {
+      final Database db = await _databaseHelper.database;
+      await db.transaction<void>((Transaction transaction) async {
+        await transaction.update(
+          DatabaseHelper.tableBoxes,
+          <String, Object?>{'group_id': null},
+          where: 'group_id = ?',
+          whereArgs: <Object?>[groupId],
+        );
+        final int deletedRows = await transaction.delete(
+          DatabaseHelper.tableGroups,
+          where: 'id = ?',
+          whereArgs: <Object?>[groupId],
+        );
+        if (deletedRows == 0) {
+          throw const NotFoundException(
+            'Le groupe à supprimer est introuvable.',
+          );
+        }
+      });
+    } on DatabaseException {
+      throw const DatabaseAccessException(
+        'Impossible de supprimer le groupe.',
+      );
+    }
+  }
 }

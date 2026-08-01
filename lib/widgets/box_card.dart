@@ -12,7 +12,7 @@ class BoxCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color background = box.color.materialColor.withOpacity(0.15);
+    final Color background = box.color.materialColor.withValues(alpha: 0.15);
     final Color foreground = box.color.materialColor;
 
     return Card(

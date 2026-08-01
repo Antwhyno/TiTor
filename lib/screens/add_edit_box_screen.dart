@@ -82,18 +82,11 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
           boxId: existingBox.id,
           name: _nameController.text,
           icon: _selectedIcon,
+          color: _selectedColor,
           groupId: _selectedGroupId,
           clearGroup: _selectedGroupId == null,
         ),
       );
-      if (existingBox.color != _selectedColor) {
-        boxBloc.add(
-          ChangeBoxColorRequested(
-            boxId: existingBox.id,
-            newColor: _selectedColor,
-          ),
-        );
-      }
     }
     Navigator.of(context).pop();
   }

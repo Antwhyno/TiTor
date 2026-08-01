@@ -19,27 +19,27 @@ abstract class AppException implements Exception {
 /// Levée en cas d'échec d'accès à la base de données locale.
 class DatabaseAccessException extends AppException {
   const DatabaseAccessException([
-    String message = "Impossible d'accéder à la base de données locale.",
-  ]) : super(message);
+    super.message = "Impossible d'accéder à la base de données locale.",
+  ]);
 }
 
 /// Levée lorsque des données attendues sont nulles ou corrompues.
 class InvalidDataException extends AppException {
   const InvalidDataException([
-    String message = 'Les données reçues sont invalides ou incomplètes.',
-  ]) : super(message);
+    super.message = 'Les données reçues sont invalides ou incomplètes.',
+  ]);
 }
 
 /// Levée lorsqu'une opération nécessite une connexion réseau absente.
 class NoNetworkException extends AppException {
   const NoNetworkException([
-    String message = 'Aucune connexion réseau disponible.',
-  ]) : super(message);
+    super.message = 'Aucune connexion réseau disponible.',
+  ]);
 }
 
 /// Levée lorsqu'une entité recherchée (boîte, groupe) est introuvable.
 class NotFoundException extends AppException {
   const NotFoundException([
-    String message = "L'élément demandé est introuvable.",
-  ]) : super(message);
+    super.message = "L'élément demandé est introuvable.",
+  ]);
 }

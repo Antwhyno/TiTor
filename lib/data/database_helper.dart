@@ -46,6 +46,9 @@ class DatabaseHelper {
         path,
         version: _databaseVersion,
         onCreate: _onCreate,
+        onConfigure: (Database db) async {
+          await db.execute('PRAGMA foreign_keys = ON');
+        },
       );
     } on Exception {
       throw const DatabaseAccessException(

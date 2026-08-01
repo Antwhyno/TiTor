@@ -91,8 +91,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     Emitter<BoxState> emit,
   ) async {
     final List<BoxModel> boxes = _currentBoxes;
-    final int index =
-        boxes.indexWhere((BoxModel box) => box.id == event.boxId);
+    final int index = boxes.indexWhere((BoxModel box) => box.id == event.boxId);
     if (index == -1) {
       emit(BoxError(
         message: 'La boîte à modifier est introuvable.',
@@ -116,9 +115,12 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
         groupId: event.groupId,
         clearGroup: event.clearGroup,
       );
-      await _repository.update(updatedBox);
+      final BoxModel finalBox = updatedBox.color == event.color
+          ? updatedBox
+          : updatedBox.withColor(event.color);
+      await _repository.update(finalBox);
       final List<BoxModel> newBoxes = List<BoxModel>.from(boxes);
-      newBoxes[index] = updatedBox;
+      newBoxes[index] = finalBox;
       emit(BoxLoaded(newBoxes));
     } on AppException catch (error) {
       emit(BoxError(message: error.message, previousBoxes: boxes));
@@ -135,8 +137,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     Emitter<BoxState> emit,
   ) async {
     final List<BoxModel> boxes = _currentBoxes;
-    final int index =
-        boxes.indexWhere((BoxModel box) => box.id == event.boxId);
+    final int index = boxes.indexWhere((BoxModel box) => box.id == event.boxId);
     if (index == -1) {
       emit(BoxError(
         message: 'La boîte est introuvable.',

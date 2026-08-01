@@ -124,23 +124,24 @@ class BoxModel {
     final Object? rawId = map['id'];
     final Object? rawName = map['name'];
 
-    if (rawId == null || rawName == null) {
+    if (rawId is! String || rawName is! String) {
       throw FormatException('Données de boîte invalides : $map');
     }
 
     final Object? rawCreatedAt = map['created_at'];
     final Object? rawExpiresAt = map['expires_at'];
 
-    final DateTime createdAt = rawCreatedAt is String
-        ? DateTime.tryParse(rawCreatedAt) ?? DateTime.now()
-        : DateTime.now();
-    final DateTime expiresAt = rawExpiresAt is String
-        ? DateTime.tryParse(rawExpiresAt) ?? createdAt
-        : createdAt;
+    final DateTime? createdAt =
+        rawCreatedAt is String ? DateTime.tryParse(rawCreatedAt) : null;
+    final DateTime? expiresAt =
+        rawExpiresAt is String ? DateTime.tryParse(rawExpiresAt) : null;
+    if (createdAt == null || expiresAt == null) {
+      throw FormatException('Dates de boîte invalides : $map');
+    }
 
     return BoxModel(
-      id: rawId as String,
-      name: rawName as String,
+      id: rawId,
+      name: rawName,
       iconCodePoint: (map['icon_code_point'] as int?) ?? Icons.inbox.codePoint,
       iconFontFamily: (map['icon_font_family'] as String?) ?? 'MaterialIcons',
       iconFontPackage: map['icon_font_package'] as String?,

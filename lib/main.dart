@@ -23,8 +23,9 @@ class OrganizerApp extends StatelessWidget {
     return BlocProvider<BoxBloc>(
       create: (BuildContext context) => BoxBloc()..add(const LoadBoxes()),
       child: BlocProvider<GroupBloc>(
-        create: (BuildContext context) =>
-            GroupBloc()..add(const LoadGroups()),
+        create: (BuildContext context) => GroupBloc(
+          onBoxesChanged: () => context.read<BoxBloc>().add(const LoadBoxes()),
+        )..add(const LoadGroups()),
         child: MaterialApp(
           title: 'Organizer',
           debugShowCheckedModeBanner: false,
