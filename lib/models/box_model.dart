@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'box_color_type.dart';
-import 'package:flutter/material.dart';
-import 'box_color_type.dart';
 import '../utils/icon_catalog.dart';
 
 /// Modèle représentant une boîte de l'application.
