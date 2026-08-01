@@ -27,7 +27,7 @@ class GroupSelectorField extends StatelessWidget {
     final String? safeValue = selectedExists ? selectedGroupId : null;
 
     return DropdownButtonFormField<String?>(
-      value: safeValue,
+      initialValue: safeValue,
       decoration: const InputDecoration(
         labelText: 'Groupe (optionnel)',
         border: OutlineInputBorder(),

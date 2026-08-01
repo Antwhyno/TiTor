@@ -101,7 +101,8 @@ class BoxDetailScreen extends StatelessWidget {
               Center(
                 child: CircleAvatar(
                   radius: 40,
-                  backgroundColor: box.color.materialColor.withOpacity(0.15),
+                  backgroundColor:
+                      box.color.materialColor.withValues(alpha: 0.15),
                   child: Icon(
                     box.icon,
                     size: 40,

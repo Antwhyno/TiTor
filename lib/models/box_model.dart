@@ -96,11 +96,7 @@ class BoxModel {
     );
   }
 
-  /// Change la couleur de la boîte et recalcule sa date d'expiration
-  /// en repartant du moment du changement (et non de la date de
-  /// création initiale) : la nouvelle durée s'applique pleinement à
-  /// partir de maintenant, ce qui correspond au comportement attendu
-  /// lorsqu'un utilisateur fait passer une boîte au rouge en urgence.
+  /// Change la couleur de la boîte et recalcule sa date d'expiration.
   BoxModel withColor(BoxColorType newColor, {DateTime? changedAt}) {
     final DateTime reference = changedAt ?? DateTime.now();
     return copyWith(
@@ -124,10 +120,6 @@ class BoxModel {
   }
 
   /// Reconstruit une [BoxModel] à partir d'une ligne de base de données.
-  /// Gère explicitement le cas de données nulles ou corrompues, en
-  /// levant une [FormatException] claire pour les champs obligatoires
-  /// manquants et en appliquant des valeurs par défaut sûres pour les
-  /// champs secondaires.
   factory BoxModel.fromMap(Map<String, Object?> map) {
     final Object? rawId = map['id'];
     final Object? rawName = map['name'];
@@ -149,11 +141,10 @@ class BoxModel {
     return BoxModel(
       id: rawId as String,
       name: rawName as String,
-      iconCodePoint:
-          (map['icon_code_point'] as int?) ?? Icons.inbox.codePoint,
+      iconCodePoint: (map['icon_code_point'] as int?) ?? Icons.inbox.codePoint,
       iconFontFamily: (map['icon_font_family'] as String?) ?? 'MaterialIcons',
       iconFontPackage: map['icon_font_package'] as String?,
-      color: BoxColorTypeX.fromStorageValue(map['color'] as String?),
+      color: BoxColorType.fromStorageValue(map['color'] as String?),
       groupId: map['group_id'] as String?,
       createdAt: createdAt,
       expiresAt: expiresAt,

@@ -5,14 +5,9 @@ import 'package:flutter/material.dart';
 enum BoxColorType {
   red,
   green,
-  yellow,
-}
+  yellow; // Le point-virgule est obligatoire ici pour séparer les valeurs des membres.
 
-/// Extension utilitaire associant à chaque [BoxColorType] sa durée de
-/// chronomètre, sa couleur d'affichage et son libellé lisible.
-extension BoxColorTypeX on BoxColorType {
-  /// Durée avant expiration du chronomètre, selon la couleur :
-  /// Rouge -> 1 jour, Jaune -> 7 jours, Vert -> 14 jours.
+  /// Durée avant expiration du chronomètre, selon la couleur.
   Duration get reminderDuration {
     switch (this) {
       case BoxColorType.red:
@@ -48,13 +43,10 @@ extension BoxColorTypeX on BoxColorType {
     }
   }
 
-  /// Valeur technique stockée en base de données (nom de l'énumération).
+  /// Valeur technique stockée en base de données.
   String get storageValue => name;
 
-  /// Reconstruit un [BoxColorType] à partir de sa valeur stockée.
-  /// Si la valeur est nulle ou inconnue (donnée corrompue), retourne
-  /// une valeur par défaut plutôt que de lever une exception : c'est
-  /// une gestion défensive du cas limite "donnée invalide".
+  /// Reconstruit un [BoxColorType] à partir de sa valeur stockée (gestion défensive).
   static BoxColorType fromStorageValue(String? value) {
     return BoxColorType.values.firstWhere(
       (BoxColorType type) => type.storageValue == value,
