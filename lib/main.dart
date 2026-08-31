@@ -6,9 +6,16 @@ import 'blocs/box/box_event.dart';
 import 'blocs/group/group_bloc.dart';
 import 'blocs/group/group_event.dart';
 import 'screens/home_screen.dart';
+import 'utils/notification_service.dart';
 
-void main() {
+void main() async {
+  // 1. Garantit l'initialisation du moteur Flutter avant les appels système
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 2. Initialise le gestionnaire de notifications et les fuseaux horaires
+  await NotificationService.init();
+
+  // 3. Lance l'arbre de composants
   runApp(const OrganizerApp());
 }
 
@@ -27,7 +34,7 @@ class OrganizerApp extends StatelessWidget {
           onBoxesChanged: () => context.read<BoxBloc>().add(const LoadBoxes()),
         )..add(const LoadGroups()),
         child: MaterialApp(
-          title: 'Organizer',
+          title: 'TiTor',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             colorSchemeSeed: const Color(0xFF3F51B5),
