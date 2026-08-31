@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Organizer'),
+        toolbarHeight: 0,
         bottom: TabBar(
           controller: _tabController,
           tabs: const <Widget>[
@@ -183,9 +183,8 @@ class _HomeScreenState extends State<HomeScreen>
         builder: (BuildContext context, Widget? child) {
           final bool isBoxesTab = _tabController.index == 0;
           return FloatingActionButton.extended(
-            onPressed: () => isBoxesTab
-                ? _openAddBoxScreen(context)
-                : _createGroup(context),
+            onPressed: () =>
+                isBoxesTab ? _openAddBoxScreen(context) : _createGroup(context),
             icon: const Icon(Icons.add),
             label: Text(isBoxesTab ? 'Nouvelle boîte' : 'Nouveau groupe'),
           );
@@ -226,8 +225,7 @@ class _BoxesTab extends StatelessWidget {
         }
 
         return RefreshIndicator(
-          onRefresh: () async =>
-              context.read<BoxBloc>().add(const LoadBoxes()),
+          onRefresh: () async => context.read<BoxBloc>().add(const LoadBoxes()),
           child: ListView.builder(
             padding: const EdgeInsets.only(bottom: 88, top: 8),
             itemCount: boxes.length,

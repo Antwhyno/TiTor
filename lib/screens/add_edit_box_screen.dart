@@ -38,7 +38,7 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
     super.initState();
     final BoxModel? box = widget.existingBox;
     _nameController = TextEditingController(text: box?.name ?? '');
-    _selectedIcon = box?.icon ?? IconCatalog.fallback;
+    _selectedIcon = box?.icon ?? Icons.inbox;
     _selectedColor = box?.color ?? BoxColorType.yellow;
     _selectedGroupId = box?.groupId;
   }
@@ -117,15 +117,6 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
                     border: OutlineInputBorder(),
                   ),
                   validator: _validateName,
-                ),
-                const SizedBox(height: 24),
-                Text('Icône', style: Theme.of(context).textTheme.titleSmall),
-                const SizedBox(height: 8),
-                IconPickerField(
-                  selected: _selectedIcon,
-                  onChanged: (IconData icon) {
-                    setState(() => _selectedIcon = icon);
-                  },
                 ),
                 const SizedBox(height: 24),
                 Text(
