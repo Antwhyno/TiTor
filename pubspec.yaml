@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_local_notifications: ^17.2.2
+  timezone: ^0.9.4
 
   # Gestion d'état (pattern BLoC)
   flutter_bloc: ^8.1.5

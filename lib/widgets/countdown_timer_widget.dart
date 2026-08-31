@@ -58,13 +58,10 @@ class _CountdownTimerWidgetState extends State<CountdownTimerWidget> {
     final int days = absolute.inDays;
     final int hours = absolute.inHours % 24;
     final int minutes = absolute.inMinutes % 60;
-    final int seconds = absolute.inSeconds % 60;
 
     final String value = days > 0
         ? '${days}j ${hours.toString().padLeft(2, '0')}h'
-        : '${hours.toString().padLeft(2, '0')}h '
-            '${minutes.toString().padLeft(2, '0')}m '
-            '${seconds.toString().padLeft(2, '0')}s';
+        : '${hours.toString().padLeft(2, '0')}h ${minutes.toString().padLeft(2, '0')}m';
 
     return isExpired ? 'Expirée depuis $value' : value;
   }
