@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../data/app_exceptions.dart';
 import '../../data/box_repository.dart';
 import '../../models/box_model.dart';
+import '../../utils/notification_service.dart';
 import 'box_event.dart';
 import 'box_state.dart';
 
@@ -73,8 +74,15 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
         icon: event.icon,
         color: event.color,
         groupId: event.groupId,
+        customDuration:
+            event.customDuration, // 1. Prise en compte de la durée saisie
       );
+
       await _repository.insert(newBox);
+
+      // 2. Programmation de l'alarme de notification en arrière-plan
+      await NotificationService.scheduleBoxExpiration(newBox);
+
       emit(BoxLoaded(<BoxModel>[newBox, ..._currentBoxes]));
     } on AppException catch (error) {
       emit(BoxError(message: error.message, previousBoxes: _currentBoxes));
@@ -119,7 +127,13 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
       final BoxModel finalBox = updatedBox.color == event.color
           ? updatedBox
           : updatedBox.withColor(event.color);
+
       await _repository.update(finalBox);
+
+      // Mise à jour de l'alarme système
+      await NotificationService.cancelBoxNotification(finalBox.id);
+      await NotificationService.scheduleBoxExpiration(finalBox);
+
       final List<BoxModel> newBoxes = List<BoxModel>.from(boxes);
       newBoxes[index] = finalBox;
       emit(BoxLoaded(newBoxes));
@@ -151,6 +165,11 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
         boxes[index],
         event.newColor,
       );
+
+      // Reprogrammation de l'alarme suite au changement de durée associé à la couleur
+      await NotificationService.cancelBoxNotification(updatedBox.id);
+      await NotificationService.scheduleBoxExpiration(updatedBox);
+
       final List<BoxModel> newBoxes = List<BoxModel>.from(boxes);
       newBoxes[index] = updatedBox;
       emit(BoxLoaded(newBoxes));
@@ -171,6 +190,10 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     final List<BoxModel> boxes = _currentBoxes;
     try {
       await _repository.delete(event.boxId);
+
+      // Annulation de la notification programmée pour la boîte supprimée
+      await NotificationService.cancelBoxNotification(event.boxId);
+
       final List<BoxModel> newBoxes =
           boxes.where((BoxModel box) => box.id != event.boxId).toList();
       emit(BoxLoaded(newBoxes));

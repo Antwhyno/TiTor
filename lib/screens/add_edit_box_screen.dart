@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/box/box_bloc.dart';
@@ -8,13 +9,9 @@ import '../blocs/group/group_state.dart';
 import '../models/box_color_type.dart';
 import '../models/box_group_model.dart';
 import '../models/box_model.dart';
-import '../utils/icon_catalog.dart';
 import '../widgets/color_picker_field.dart';
 import '../widgets/group_selector_field.dart';
-import '../widgets/icon_picker_field.dart';
 
-/// Écran de création ou de modification d'une boîte.
-/// Si [existingBox] est fourni, l'écran fonctionne en mode édition.
 class AddEditBoxScreen extends StatefulWidget {
   final BoxModel? existingBox;
 
@@ -27,6 +24,8 @@ class AddEditBoxScreen extends StatefulWidget {
 class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
+  late final TextEditingController _daysController;
+  late final TextEditingController _hoursController;
   late IconData _selectedIcon;
   late BoxColorType _selectedColor;
   String? _selectedGroupId;
@@ -41,11 +40,28 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
     _selectedIcon = box?.icon ?? Icons.inbox;
     _selectedColor = box?.color ?? BoxColorType.yellow;
     _selectedGroupId = box?.groupId;
+
+    // Initialisation des champs de durée
+    if (box != null) {
+      final Duration remaining = box.remaining();
+      final Duration absolute =
+          remaining.isNegative ? Duration.zero : remaining;
+      _daysController = TextEditingController(text: absolute.inDays.toString());
+      _hoursController = TextEditingController(
+        text: (absolute.inHours % 24).toString(),
+      );
+    } else {
+      // Valeurs par défaut pour une nouvelle boîte (ex: 7 jours, 0 heure)
+      _daysController = TextEditingController(text: '7');
+      _hoursController = TextEditingController(text: '0');
+    }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _daysController.dispose();
+    _hoursController.dispose();
     super.dispose();
   }
 
@@ -59,8 +75,33 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
     return null;
   }
 
+  String? _validateDuration(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Obligatoire';
+    }
+    final int? parsed = int.tryParse(value.trim());
+    if (parsed == null || parsed < 0) {
+      return 'Invalide';
+    }
+    return null;
+  }
+
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    final int days = int.tryParse(_daysController.text.trim()) ?? 0;
+    final int hours = int.tryParse(_hoursController.text.trim()) ?? 0;
+    final Duration customDuration = Duration(days: days, hours: hours);
+
+    // Sécurité : la durée totale doit être d'au moins 1 minute
+    if (customDuration.inMinutes <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('La durée d\'expiration doit être supérieure à 0.'),
+        ),
+      );
       return;
     }
 
@@ -70,17 +111,18 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
     if (existingBox == null) {
       boxBloc.add(
         AddBoxRequested(
-          name: _nameController.text,
+          name: _nameController.text.trim(),
           icon: _selectedIcon,
           color: _selectedColor,
           groupId: _selectedGroupId,
+          customDuration: customDuration,
         ),
       );
     } else {
       boxBloc.add(
         UpdateBoxRequested(
           boxId: existingBox.id,
-          name: _nameController.text,
+          name: _nameController.text.trim(),
           icon: _selectedIcon,
           color: _selectedColor,
           groupId: _selectedGroupId,
@@ -119,6 +161,50 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
                   validator: _validateName,
                 ),
                 const SizedBox(height: 24),
+
+                // Section de saisie manuelle de la durée
+                Text(
+                  'Délai avant expiration',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextFormField(
+                        controller: _daysController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        decoration: const InputDecoration(
+                          labelText: 'Jours',
+                          border: OutlineInputBorder(),
+                          suffixText: 'j',
+                        ),
+                        validator: _validateDuration,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _hoursController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        decoration: const InputDecoration(
+                          labelText: 'Heures',
+                          border: OutlineInputBorder(),
+                          suffixText: 'h',
+                        ),
+                        validator: _validateDuration,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
                 Text(
                   'Couleur',
                   style: Theme.of(context).textTheme.titleSmall,

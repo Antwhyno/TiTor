@@ -22,16 +22,19 @@ class AddBoxRequested extends BoxEvent {
   final IconData icon;
   final BoxColorType color;
   final String? groupId;
+  final Duration? customDuration; // <-- Nouveau champ optionnel
 
   const AddBoxRequested({
     required this.name,
     required this.icon,
     required this.color,
     this.groupId,
+    this.customDuration, // <-- Paramètre optionnel
   });
 
   @override
-  List<Object?> get props => <Object?>[name, icon, color, groupId];
+  List<Object?> get props =>
+      <Object?>[name, icon, color, groupId, customDuration];
 }
 
 /// Demande la modification d'une boîte existante (nom, icône, groupe).

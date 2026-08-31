@@ -52,8 +52,10 @@ class BoxModel {
     required BoxColorType color,
     String? groupId,
     DateTime? now,
+    Duration? customDuration,
   }) {
     final DateTime creationDate = now ?? DateTime.now();
+    final Duration duration = customDuration ?? color.reminderDuration;
     return BoxModel(
       id: id,
       name: name,
@@ -63,7 +65,8 @@ class BoxModel {
       color: color,
       groupId: groupId,
       createdAt: creationDate,
-      expiresAt: creationDate.add(color.reminderDuration),
+      expiresAt: creationDate
+          .add(duration), // <-- Utilise la variable duration calculée
     );
   }
 
