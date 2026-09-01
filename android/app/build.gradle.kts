@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.TiTor"
+    namespace = "com.example.organizer_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
