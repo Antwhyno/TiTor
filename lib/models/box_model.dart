@@ -102,13 +102,15 @@ class BoxModel {
   Color? get manualColor =>
       manualColorValue != null ? Color(manualColorValue!) : null;
 
-  /// Couleur à afficher dans l'interface pour cette lipo.
+  /// Couleur de fond à afficher pour cette lipo (carte, panneau...).
   ///
-  /// Si l'utilisateur a choisi une couleur manuellement, celle-ci est
-  /// utilisée telle quelle. Sinon, la couleur est calculée
-  /// automatiquement : plus la lipo approche de sa date d'expiration
-  /// (recharge à venir), plus elle tend vers le rouge ; plus elle en
-  /// est loin, plus elle tend vers le vert.
+  /// Ne concerne pas la couleur de l'icône, qui reste toujours celle
+  /// choisie à la création ([color.materialColor]). Si l'utilisateur a
+  /// choisi une couleur de fond manuellement, celle-ci est utilisée
+  /// telle quelle. Sinon, la couleur est calculée automatiquement :
+  /// plus la lipo approche de sa date d'expiration (recharge à venir),
+  /// plus elle tend vers le rouge ; plus elle en est loin, plus elle
+  /// tend vers le vert.
   Color displayColor({DateTime? now}) {
     final Color? manual = manualColor;
     if (manual != null) {

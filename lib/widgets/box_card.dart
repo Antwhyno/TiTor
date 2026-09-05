@@ -13,12 +13,22 @@ class BoxCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Couleur choisie à la création de la lipo (catégorie rouge/jaune/vert
+    // liée à la durée du chronomètre) : reste fixe sur l'icône, quel que
+    // soit le temps qui passe.
+    final Color iconColor = box.color.materialColor;
+
     return BoxColorTicker(
       box: box,
-      builder: (BuildContext context, Color foreground) {
-        final Color background = foreground.withValues(alpha: 0.15);
+      builder: (BuildContext context, Color proximityColor) {
+        // Couleur de fond de toute la carte : reflète le temps restant
+        // avant expiration (plus c'est proche, plus c'est rouge ; plus
+        // c'est loin, plus c'est vert), ou la couleur manuelle si
+        // l'utilisateur en a choisi une.
+        final Color cardBackground = proximityColor.withValues(alpha: 0.18);
 
         return Card(
+          color: cardBackground,
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
@@ -29,8 +39,8 @@ class BoxCard extends StatelessWidget {
                 children: <Widget>[
                   CircleAvatar(
                     radius: 24,
-                    backgroundColor: background,
-                    child: Icon(box.icon, color: foreground),
+                    backgroundColor: iconColor.withValues(alpha: 0.2),
+                    child: Icon(box.icon, color: iconColor),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -52,7 +62,7 @@ class BoxCard extends StatelessWidget {
                     width: 12,
                     height: 12,
                     decoration: BoxDecoration(
-                      color: foreground,
+                      color: proximityColor,
                       shape: BoxShape.circle,
                     ),
                   ),

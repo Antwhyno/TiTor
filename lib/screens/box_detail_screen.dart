@@ -100,21 +100,30 @@ class BoxDetailScreen extends StatelessWidget {
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: <Widget>[
-              Center(
-                child: BoxColorTicker(
-                  box: box,
-                  builder: (BuildContext context, Color displayColor) {
-                    return CircleAvatar(
-                      radius: 40,
-                      backgroundColor: displayColor.withValues(alpha: 0.15),
-                      child: Icon(
-                        box.icon,
-                        size: 40,
-                        color: displayColor,
+              BoxColorTicker(
+                box: box,
+                builder: (BuildContext context, Color proximityColor) {
+                  return Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    decoration: BoxDecoration(
+                      color: proximityColor.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Center(
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundColor:
+                            box.color.materialColor.withValues(alpha: 0.2),
+                        child: Icon(
+                          box.icon,
+                          size: 40,
+                          color: box.color.materialColor,
+                        ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 16),
               Center(child: CountdownTimerWidget(expiresAt: box.expiresAt)),
@@ -145,15 +154,16 @@ class BoxDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'Couleur affichée',
+                'Couleur de fond',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 4),
               Text(
-                'Par défaut, la couleur affichée sur cette lipo évolue '
+                'Par défaut, la couleur de fond de cette lipo évolue '
                 'automatiquement à mesure que la date d\'expiration '
-                'approche (du vert au rouge). Vous pouvez toutefois la '
-                'forcer manuellement ci-dessous.',
+                'approche (du vert au rouge). L\'icône, elle, garde '
+                'toujours la couleur choisie ci-dessus. Vous pouvez '
+                'forcer la couleur de fond manuellement ci-dessous.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
