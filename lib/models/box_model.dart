@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'box_color_type.dart';
 import '../utils/icon_catalog.dart';
+import '../utils/proximity_color.dart';
 
 /// Modèle représentant une lipo de l'application.
 ///
@@ -17,6 +18,12 @@ class BoxModel {
   final DateTime createdAt;
   final DateTime expiresAt;
 
+  /// Couleur choisie manuellement par l'utilisateur (valeur ARGB), qui
+  /// prime sur la couleur automatique de proximité lorsqu'elle est
+  /// définie. `null` signifie que la couleur est calculée
+  /// automatiquement en fonction du temps restant avant expiration.
+  final int? manualColorValue;
+
   BoxModel({
     required this.id,
     required this.name,
@@ -27,6 +34,7 @@ class BoxModel {
     this.groupId,
     required this.createdAt,
     required this.expiresAt,
+    this.manualColorValue,
   }) {
     // Validation des invariants (Programmation défensive)
     if (id.trim().isEmpty) {
@@ -85,6 +93,46 @@ class BoxModel {
   /// Indique si le chronomètre de la lipo est arrivé à expiration.
   bool isExpired({DateTime? now}) => remaining(now: now) <= Duration.zero;
 
+  /// Indique si une couleur manuelle a été choisie par l'utilisateur,
+  /// désactivant ainsi le calcul automatique de couleur par proximité.
+  bool get hasManualColor => manualColorValue != null;
+
+  /// Couleur manuelle reconstituée depuis sa valeur ARGB stockée, ou
+  /// `null` si aucune couleur manuelle n'est définie.
+  Color? get manualColor =>
+      manualColorValue != null ? Color(manualColorValue!) : null;
+
+  /// Couleur à afficher dans l'interface pour cette lipo.
+  ///
+  /// Si l'utilisateur a choisi une couleur manuellement, celle-ci est
+  /// utilisée telle quelle. Sinon, la couleur est calculée
+  /// automatiquement : plus la lipo approche de sa date d'expiration
+  /// (recharge à venir), plus elle tend vers le rouge ; plus elle en
+  /// est loin, plus elle tend vers le vert.
+  Color displayColor({DateTime? now}) {
+    final Color? manual = manualColor;
+    if (manual != null) {
+      return manual;
+    }
+    return ProximityColor.compute(
+      createdAt: createdAt,
+      expiresAt: expiresAt,
+      now: now,
+    );
+  }
+
+  /// Crée une copie avec une couleur manuelle forcée, désactivant le
+  /// calcul automatique par proximité.
+  BoxModel withManualColor(Color color) {
+    return copyWith(manualColorValue: color.toARGB32());
+  }
+
+  /// Crée une copie qui revient au calcul automatique de couleur par
+  /// proximité, en effaçant toute couleur manuelle précédemment choisie.
+  BoxModel clearManualColor() {
+    return copyWith(clearManualColor: true);
+  }
+
   /// Crée une copie de l'instance en modifiant certains champs.
   ///
   /// Utilisez [clearIconFontPackage] à true pour effacer le package d'icône.
@@ -101,6 +149,8 @@ class BoxModel {
     bool clearGroup = false,
     DateTime? createdAt,
     DateTime? expiresAt,
+    int? manualColorValue,
+    bool clearManualColor = false,
   }) {
     final BoxColorType newColor = color ?? this.color;
 
@@ -123,6 +173,9 @@ class BoxModel {
       groupId: clearGroup ? null : (groupId ?? this.groupId),
       createdAt: createdAt ?? this.createdAt,
       expiresAt: newExpiresAt,
+      manualColorValue: clearManualColor
+          ? null
+          : (manualColorValue ?? this.manualColorValue),
     );
   }
 
@@ -146,6 +199,7 @@ class BoxModel {
       'group_id': groupId,
       'created_at': createdAt.toIso8601String(),
       'expires_at': expiresAt.toIso8601String(),
+      'manual_color': manualColorValue,
     };
   }
 
@@ -189,6 +243,11 @@ class BoxModel {
     final BoxColorType color =
         BoxColorType.fromStorageValue(map['color'] as String?);
 
+    final Object? rawManualColor = map['manual_color'];
+    final int? manualColorValue = rawManualColor is int
+        ? rawManualColor
+        : (rawManualColor is String ? int.tryParse(rawManualColor) : null);
+
     return BoxModel(
       id: rawId,
       name: rawName,
@@ -199,6 +258,7 @@ class BoxModel {
       groupId: groupId,
       createdAt: createdAt,
       expiresAt: expiresAt,
+      manualColorValue: manualColorValue,
     );
   }
 

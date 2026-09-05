@@ -28,6 +28,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     on<AddBoxRequested>(_onAddBoxRequested);
     on<UpdateBoxRequested>(_onUpdateBoxRequested);
     on<ChangeBoxColorRequested>(_onChangeBoxColorRequested);
+    on<ChangeBoxManualColorRequested>(_onChangeBoxManualColorRequested);
     on<DeleteBoxRequested>(_onDeleteBoxRequested);
   }
 
@@ -169,6 +170,41 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
       // Reprogrammation de l'alarme suite au changement de durée associé à la couleur
       await NotificationService.cancelBoxNotification(updatedBox.id);
       await NotificationService.scheduleBoxExpiration(updatedBox);
+
+      final List<BoxModel> newBoxes = List<BoxModel>.from(boxes);
+      newBoxes[index] = updatedBox;
+      emit(BoxLoaded(newBoxes));
+    } on AppException catch (error) {
+      emit(BoxError(message: error.message, previousBoxes: boxes));
+    } on Exception {
+      emit(BoxError(
+        message: 'Impossible de changer la couleur de la lipo.',
+        previousBoxes: boxes,
+      ));
+    }
+  }
+
+  Future<void> _onChangeBoxManualColorRequested(
+    ChangeBoxManualColorRequested event,
+    Emitter<BoxState> emit,
+  ) async {
+    final List<BoxModel> boxes = _currentBoxes;
+    final int index = boxes.indexWhere((BoxModel box) => box.id == event.boxId);
+    if (index == -1) {
+      emit(BoxError(
+        message: 'La lipo est introuvable.',
+        previousBoxes: boxes,
+      ));
+      return;
+    }
+    try {
+      // Note : ceci ne modifie que la couleur affichée, pas le
+      // chronomètre : aucune reprogrammation de notification n'est
+      // donc nécessaire ici.
+      final BoxModel updatedBox = await _repository.setManualColor(
+        boxes[index],
+        event.manualColor,
+      );
 
       final List<BoxModel> newBoxes = List<BoxModel>.from(boxes);
       newBoxes[index] = updatedBox;

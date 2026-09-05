@@ -21,7 +21,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
   static const String _databaseName = 'organizer_app.db';
-  static const int _databaseVersion = 1;
+  static const int _databaseVersion = 2;
 
   static const String tableBoxes = 'boxes';
   static const String tableGroups = 'groups';
@@ -46,6 +46,7 @@ class DatabaseHelper {
         path,
         version: _databaseVersion,
         onCreate: _onCreate,
+        onUpgrade: _onUpgrade,
         onConfigure: (Database db) async {
           await db.execute('PRAGMA foreign_keys = ON');
         },
@@ -77,10 +78,25 @@ class DatabaseHelper {
         group_id TEXT,
         created_at TEXT NOT NULL,
         expires_at TEXT NOT NULL,
+        manual_color INTEGER,
         FOREIGN KEY (group_id) REFERENCES $tableGroups (id)
           ON DELETE SET NULL
       )
     ''');
+  }
+
+  /// Gère les migrations de schéma entre versions successives.
+  ///
+  /// Version 2 : ajout de la colonne `manual_color`, qui permet à
+  /// l'utilisateur de forcer manuellement la couleur d'une lipo,
+  /// plutôt que de laisser la couleur être calculée automatiquement
+  /// selon la proximité de la date d'expiration.
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+        'ALTER TABLE $tableBoxes ADD COLUMN manual_color INTEGER',
+      );
+    }
   }
 
   /// Ferme proprement la connexion (utile notamment pour les tests).

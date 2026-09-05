@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../models/box_color_type.dart';
@@ -92,6 +93,19 @@ class BoxRepository {
   /// date d'expiration en fonction de la nouvelle durée associée.
   Future<BoxModel> changeColor(BoxModel box, BoxColorType newColor) async {
     final BoxModel updated = box.withColor(newColor);
+    await update(updated);
+    return updated;
+  }
+
+  /// Force ou réinitialise la couleur manuelle d'affichage d'une lipo.
+  ///
+  /// Contrairement à [changeColor], cette opération ne modifie ni le
+  /// chronomètre, ni la date d'expiration : elle n'agit que sur la
+  /// couleur affichée dans l'interface. Passer [manualColor] à `null`
+  /// réactive le calcul automatique par proximité de l'expiration.
+  Future<BoxModel> setManualColor(BoxModel box, Color? manualColor) async {
+    final BoxModel updated =
+        manualColor == null ? box.clearManualColor() : box.withManualColor(manualColor);
     await update(updated);
     return updated;
   }

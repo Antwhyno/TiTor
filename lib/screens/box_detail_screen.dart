@@ -8,9 +8,11 @@ import '../blocs/box/box_state.dart';
 import '../blocs/group/group_bloc.dart';
 import '../models/box_color_type.dart';
 import '../models/box_model.dart';
+import '../widgets/box_color_ticker.dart';
 import '../widgets/color_picker_field.dart';
 import '../widgets/confirm_delete_dialog.dart';
 import '../widgets/countdown_timer_widget.dart';
+import '../widgets/manual_color_picker_field.dart';
 import 'add_edit_box_screen.dart';
 
 /// Écran de détail d'une lipo : affiche ses informations, permet de
@@ -99,15 +101,19 @@ class BoxDetailScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             children: <Widget>[
               Center(
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundColor:
-                      box.color.materialColor.withValues(alpha: 0.15),
-                  child: Icon(
-                    box.icon,
-                    size: 40,
-                    color: box.color.materialColor,
-                  ),
+                child: BoxColorTicker(
+                  box: box,
+                  builder: (BuildContext context, Color displayColor) {
+                    return CircleAvatar(
+                      radius: 40,
+                      backgroundColor: displayColor.withValues(alpha: 0.15),
+                      child: Icon(
+                        box.icon,
+                        size: 40,
+                        color: displayColor,
+                      ),
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 16),
@@ -135,6 +141,31 @@ class BoxDetailScreen extends StatelessWidget {
                           ),
                         );
                   }
+                },
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Couleur affichée',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Par défaut, la couleur affichée sur cette lipo évolue '
+                'automatiquement à mesure que la date d\'expiration '
+                'approche (du vert au rouge). Vous pouvez toutefois la '
+                'forcer manuellement ci-dessous.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 8),
+              ManualColorPickerField(
+                selected: box.manualColor,
+                onChanged: (Color? manualColor) {
+                  context.read<BoxBloc>().add(
+                        ChangeBoxManualColorRequested(
+                          boxId: box.id,
+                          manualColor: manualColor,
+                        ),
+                      );
                 },
               ),
             ],

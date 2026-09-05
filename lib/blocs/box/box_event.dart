@@ -75,6 +75,25 @@ class ChangeBoxColorRequested extends BoxEvent {
   List<Object?> get props => <Object?>[boxId, newColor];
 }
 
+/// Demande le changement de la couleur manuelle d'affichage d'une
+/// lipo (indépendante de la catégorie [BoxColorType] et de la durée
+/// du chronomètre). Ne modifie ni la durée, ni la date d'expiration.
+///
+/// Passer [manualColor] à `null` réactive le calcul automatique de la
+/// couleur par proximité de la date d'expiration.
+class ChangeBoxManualColorRequested extends BoxEvent {
+  final String boxId;
+  final Color? manualColor;
+
+  const ChangeBoxManualColorRequested({
+    required this.boxId,
+    required this.manualColor,
+  });
+
+  @override
+  List<Object?> get props => <Object?>[boxId, manualColor];
+}
+
 /// Demande la suppression d'une lipo.
 class DeleteBoxRequested extends BoxEvent {
   final String boxId;
