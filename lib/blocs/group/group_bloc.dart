@@ -7,10 +7,10 @@ import '../../models/box_group_model.dart';
 import 'group_event.dart';
 import 'group_state.dart';
 
-/// Gère le cycle de vie des groupes de boîtes : chargement, création,
+/// Gère le cycle de vie des groupes de lipos : chargement, création,
 /// renommage et suppression.
 ///
-/// La suppression d'un groupe détache d'abord ses boîtes (elles
+/// La suppression d'un groupe détache d'abord ses lipos (elles
 /// deviennent "sans groupe") avant de supprimer le groupe lui-même,
 /// afin de ne jamais perdre de données utilisateur.
 class GroupBloc extends Bloc<GroupEvent, GroupState> {

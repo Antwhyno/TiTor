@@ -37,7 +37,7 @@ class NoNetworkException extends AppException {
   ]);
 }
 
-/// Levée lorsqu'une entité recherchée (boîte, groupe) est introuvable.
+/// Levée lorsqu'une entité recherchée (lipo, groupe) est introuvable.
 class NotFoundException extends AppException {
   const NotFoundException([
     super.message = "L'élément demandé est introuvable.",

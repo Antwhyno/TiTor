@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 /// Catalogue fermé d'icônes proposées à l'utilisateur pour représenter
-/// une boîte.
+/// une lipo.
 ///
 /// On utilise un ensemble fermé d'[IconData] `const` : cela permet à
 /// Flutter de continuer à "tree-shaker" les polices d'icônes en mode
-/// release. Une boîte ne stocke que le `codePoint` de l'icône choisie ;
+/// release. Une lipo ne stocke que le `codePoint` de l'icône choisie ;
 /// `BoxModel.icon` retrouve l'[IconData] correspondante via
 /// [findByCodePoint] au lieu de la reconstruire dynamiquement.
 class IconCatalog {

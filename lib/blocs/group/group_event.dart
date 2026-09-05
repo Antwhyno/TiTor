@@ -34,7 +34,7 @@ class UpdateGroupRequested extends GroupEvent {
   List<Object?> get props => <Object?>[groupId, name];
 }
 
-/// Demande la suppression d'un groupe. Les boîtes qu'il contient sont
+/// Demande la suppression d'un groupe. Les lipos qu'il contient sont
 /// automatiquement détachées (elles redeviennent "sans groupe") plutôt
 /// que d'être supprimées.
 class DeleteGroupRequested extends GroupEvent {

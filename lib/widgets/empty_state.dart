@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Widget générique affiché lorsqu'une liste (boîtes ou groupes) est
+/// Widget générique affiché lorsqu'une liste (lipos ou groupes) est
 /// vide, avec une icône, un message et une action optionnelle.
 class EmptyState extends StatelessWidget {
   final IconData icon;

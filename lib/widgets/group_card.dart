@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/box_group_model.dart';
 
-/// Carte représentant un groupe de boîtes.
+/// Carte représentant un groupe de lipos.
 class GroupCard extends StatelessWidget {
   final BoxGroupModel group;
   final int boxCount;
@@ -26,7 +26,7 @@ class GroupCard extends StatelessWidget {
       child: ListTile(
         leading: const CircleAvatar(child: Icon(Icons.folder_copy_outlined)),
         title: Text(group.name),
-        subtitle: Text('$boxCount boîte(s)'),
+        subtitle: Text('$boxCount lipo(s)'),
         onTap: onTap,
         trailing: PopupMenuButton<String>(
           onSelected: (String value) {

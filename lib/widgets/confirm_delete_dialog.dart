@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Boîte de dialogue générique de confirmation de suppression.
+/// Lipo de dialogue générique de confirmation de suppression.
 /// Retourne `true` si l'utilisateur confirme, `false` sinon.
 class ConfirmDeleteDialog extends StatelessWidget {
   final String title;

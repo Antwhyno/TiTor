@@ -8,7 +8,7 @@ import '../../utils/notification_service.dart';
 import 'box_event.dart';
 import 'box_state.dart';
 
-/// Gère l'ensemble du cycle de vie des boîtes : chargement, création,
+/// Gère l'ensemble du cycle de vie des lipos : chargement, création,
 /// modification, changement de couleur et suppression.
 ///
 /// Toute erreur levée par le [BoxRepository] est capturée et
@@ -62,7 +62,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
   ) async {
     if (event.name.trim().isEmpty) {
       emit(BoxError(
-        message: 'Le nom de la boîte ne peut pas être vide.',
+        message: 'Le nom de la lipo ne peut pas être vide.',
         previousBoxes: _currentBoxes,
       ));
       return;
@@ -88,7 +88,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
       emit(BoxError(message: error.message, previousBoxes: _currentBoxes));
     } on Exception {
       emit(BoxError(
-        message: 'Impossible de créer la boîte.',
+        message: 'Impossible de créer la lipo.',
         previousBoxes: _currentBoxes,
       ));
     }
@@ -102,14 +102,14 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     final int index = boxes.indexWhere((BoxModel box) => box.id == event.boxId);
     if (index == -1) {
       emit(BoxError(
-        message: 'La boîte à modifier est introuvable.',
+        message: 'La lipo à modifier est introuvable.',
         previousBoxes: boxes,
       ));
       return;
     }
     if (event.name.trim().isEmpty) {
       emit(BoxError(
-        message: 'Le nom de la boîte ne peut pas être vide.',
+        message: 'Le nom de la lipo ne peut pas être vide.',
         previousBoxes: boxes,
       ));
       return;
@@ -141,7 +141,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
       emit(BoxError(message: error.message, previousBoxes: boxes));
     } on Exception {
       emit(BoxError(
-        message: 'Impossible de mettre à jour la boîte.',
+        message: 'Impossible de mettre à jour la lipo.',
         previousBoxes: boxes,
       ));
     }
@@ -155,7 +155,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     final int index = boxes.indexWhere((BoxModel box) => box.id == event.boxId);
     if (index == -1) {
       emit(BoxError(
-        message: 'La boîte est introuvable.',
+        message: 'La lipo est introuvable.',
         previousBoxes: boxes,
       ));
       return;
@@ -177,7 +177,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
       emit(BoxError(message: error.message, previousBoxes: boxes));
     } on Exception {
       emit(BoxError(
-        message: 'Impossible de changer la couleur de la boîte.',
+        message: 'Impossible de changer la couleur de la lipo.',
         previousBoxes: boxes,
       ));
     }
@@ -191,7 +191,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     try {
       await _repository.delete(event.boxId);
 
-      // Annulation de la notification programmée pour la boîte supprimée
+      // Annulation de la notification programmée pour la lipo supprimée
       await NotificationService.cancelBoxNotification(event.boxId);
 
       final List<BoxModel> newBoxes =
@@ -201,7 +201,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
       emit(BoxError(message: error.message, previousBoxes: boxes));
     } on Exception {
       emit(BoxError(
-        message: 'Impossible de supprimer la boîte.',
+        message: 'Impossible de supprimer la lipo.',
         previousBoxes: boxes,
       ));
     }

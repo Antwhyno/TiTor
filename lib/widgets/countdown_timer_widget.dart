@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// Affiche un compte à rebours vivant jusqu'à [expiresAt], mis à jour
 /// chaque seconde. Passe dans un état visuel "expiré" distinct
 /// lorsque la date est dépassée, ce qui matérialise l'alarme associée
-/// au chronomètre de la boîte.
+/// au chronomètre de la lipo.
 class CountdownTimerWidget extends StatefulWidget {
   final DateTime expiresAt;
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../utils/icon_catalog.dart';
 
-/// Grille de sélection d'icône pour représenter une boîte.
+/// Grille de sélection d'icône pour représenter une lipo.
 class IconPickerField extends StatelessWidget {
   final IconData selected;
   final ValueChanged<IconData> onChanged;

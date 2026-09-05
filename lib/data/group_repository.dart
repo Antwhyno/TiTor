@@ -4,7 +4,7 @@ import '../models/box_group_model.dart';
 import 'app_exceptions.dart';
 import 'database_helper.dart';
 
-/// Fournit un accès de haut niveau aux groupes de boîtes.
+/// Fournit un accès de haut niveau aux groupes de lipos.
 class GroupRepository {
   final DatabaseHelper _databaseHelper;
 

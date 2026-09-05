@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Boîte de dialogue de création ou de modification d'un groupe.
+/// Lipo de dialogue de création ou de modification d'un groupe.
 /// Retourne le nom saisi via [Navigator.pop], ou `null` en cas
 /// d'annulation.
 class AddEditGroupDialog extends StatefulWidget {

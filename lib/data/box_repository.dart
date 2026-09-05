@@ -6,7 +6,7 @@ import 'app_exceptions.dart';
 import 'database_helper.dart';
 import 'network_info.dart';
 
-/// Fournit un accès de haut niveau aux boîtes.
+/// Fournit un accès de haut niveau aux lipos.
 ///
 /// Encapsule la logique métier (calcul des dates d'expiration, etc.)
 /// et traduit systématiquement les erreurs techniques bas-niveau en
@@ -30,10 +30,10 @@ class BoxRepository {
       );
       return rows.map(BoxModel.fromMap).toList(growable: false);
     } on DatabaseException {
-      throw const DatabaseAccessException('Impossible de charger les boîtes.');
+      throw const DatabaseAccessException('Impossible de charger les lipos.');
     } on FormatException {
       throw const InvalidDataException(
-        'Certaines boîtes enregistrées sont corrompues.',
+        'Certaines lipos enregistrées sont corrompues.',
       );
     }
   }
@@ -48,7 +48,7 @@ class BoxRepository {
       );
     } on DatabaseException {
       throw const DatabaseAccessException(
-        "Impossible d'enregistrer la nouvelle boîte.",
+        "Impossible d'enregistrer la nouvelle lipo.",
       );
     }
   }
@@ -63,11 +63,11 @@ class BoxRepository {
         whereArgs: <Object?>[box.id],
       );
       if (updatedRows == 0) {
-        throw const NotFoundException('La boîte à modifier est introuvable.');
+        throw const NotFoundException('La lipo à modifier est introuvable.');
       }
     } on DatabaseException {
       throw const DatabaseAccessException(
-        'Impossible de mettre à jour la boîte.',
+        'Impossible de mettre à jour la lipo.',
       );
     }
   }
@@ -81,14 +81,14 @@ class BoxRepository {
         whereArgs: <Object?>[boxId],
       );
       if (deletedRows == 0) {
-        throw const NotFoundException('La boîte à supprimer est introuvable.');
+        throw const NotFoundException('La lipo à supprimer est introuvable.');
       }
     } on DatabaseException {
-      throw const DatabaseAccessException('Impossible de supprimer la boîte.');
+      throw const DatabaseAccessException('Impossible de supprimer la lipo.');
     }
   }
 
-  /// Change la couleur d'une boîte et recalcule automatiquement sa
+  /// Change la couleur d'une lipo et recalcule automatiquement sa
   /// date d'expiration en fonction de la nouvelle durée associée.
   Future<BoxModel> changeColor(BoxModel box, BoxColorType newColor) async {
     final BoxModel updated = box.withColor(newColor);
@@ -96,7 +96,7 @@ class BoxRepository {
     return updated;
   }
 
-  /// Détache toutes les boîtes d'un groupe (par exemple avant sa
+  /// Détache toutes les lipos d'un groupe (par exemple avant sa
   /// suppression) en les rendant "sans groupe" plutôt qu'en les
   /// supprimant : cela évite toute perte de données utilisateur.
   Future<void> detachFromGroup(String groupId) async {
@@ -110,7 +110,7 @@ class BoxRepository {
       );
     } on DatabaseException {
       throw const DatabaseAccessException(
-        'Impossible de détacher les boîtes du groupe.',
+        'Impossible de détacher les lipos du groupe.',
       );
     }
   }

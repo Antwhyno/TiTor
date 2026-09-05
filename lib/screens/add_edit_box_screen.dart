@@ -51,7 +51,7 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
         text: (absolute.inHours % 24).toString(),
       );
     } else {
-      // Valeurs par défaut pour une nouvelle boîte (ex: 7 jours, 0 heure)
+      // Valeurs par défaut pour une nouvelle lipo (ex: 7 jours, 0 heure)
       _daysController = TextEditingController(text: '7');
       _hoursController = TextEditingController(text: '0');
     }
@@ -137,7 +137,7 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Modifier la boîte' : 'Nouvelle boîte'),
+        title: Text(_isEditing ? 'Modifier la lipo' : 'Nouvelle lipo'),
       ),
       body: BlocBuilder<GroupBloc, GroupState>(
         builder: (BuildContext context, GroupState groupState) {
@@ -155,7 +155,7 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Nom de la boîte',
+                    labelText: 'Nom de la lipo',
                     border: OutlineInputBorder(),
                   ),
                   validator: _validateName,
@@ -227,7 +227,7 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
                 const SizedBox(height: 32),
                 FilledButton(
                   onPressed: _submit,
-                  child: Text(_isEditing ? 'Enregistrer' : 'Créer la boîte'),
+                  child: Text(_isEditing ? 'Enregistrer' : 'Créer la lipo'),
                 ),
               ],
             ),

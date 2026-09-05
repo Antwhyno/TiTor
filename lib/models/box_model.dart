@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'box_color_type.dart';
 import '../utils/icon_catalog.dart';
 
-/// Modèle représentant une boîte de l'application.
+/// Modèle représentant une lipo de l'application.
 ///
-/// Encapsule les données d'une boîte ainsi que ses invariants métier.
+/// Encapsule les données d'une lipo ainsi que ses invariants métier.
 @immutable
 class BoxModel {
   final String id;
@@ -31,10 +31,10 @@ class BoxModel {
     // Validation des invariants (Programmation défensive)
     if (id.trim().isEmpty) {
       throw ArgumentError(
-          'L\'identifiant (id) de la boîte ne peut pas être vide.');
+          'L\'identifiant (id) de la lipo ne peut pas être vide.');
     }
     if (name.trim().isEmpty) {
-      throw ArgumentError('Le nom de la boîte ne peut pas être vide.');
+      throw ArgumentError('Le nom de la lipo ne peut pas être vide.');
     }
     if (expiresAt.isBefore(createdAt)) {
       throw ArgumentError(
@@ -43,7 +43,7 @@ class BoxModel {
     }
   }
 
-  /// Crée une nouvelle boîte en calculant automatiquement sa date
+  /// Crée une nouvelle lipo en calculant automatiquement sa date
   /// d'expiration à partir de la durée associée à la couleur choisie.
   factory BoxModel.create({
     required String id,
@@ -82,7 +82,7 @@ class BoxModel {
     return expiresAt.difference(reference);
   }
 
-  /// Indique si le chronomètre de la boîte est arrivé à expiration.
+  /// Indique si le chronomètre de la lipo est arrivé à expiration.
   bool isExpired({DateTime? now}) => remaining(now: now) <= Duration.zero;
 
   /// Crée une copie de l'instance en modifiant certains champs.
