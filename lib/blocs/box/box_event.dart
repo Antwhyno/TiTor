@@ -11,12 +11,12 @@ abstract class BoxEvent extends Equatable {
   List<Object?> get props => <Object?>[];
 }
 
-/// Demande le chargement initial (ou le rechargement) des boîtes.
+/// Demande le chargement initial (ou le rechargement) des lipos.
 class LoadBoxes extends BoxEvent {
   const LoadBoxes();
 }
 
-/// Demande la création d'une nouvelle boîte.
+/// Demande la création d'une nouvelle lipo.
 class AddBoxRequested extends BoxEvent {
   final String name;
   final IconData icon;
@@ -37,7 +37,7 @@ class AddBoxRequested extends BoxEvent {
       <Object?>[name, icon, color, groupId, customDuration];
 }
 
-/// Demande la modification d'une boîte existante (nom, icône, groupe).
+/// Demande la modification d'une lipo existante (nom, icône, groupe).
 class UpdateBoxRequested extends BoxEvent {
   final String boxId;
   final String name;
@@ -60,7 +60,7 @@ class UpdateBoxRequested extends BoxEvent {
       <Object?>[boxId, name, icon, color, groupId, clearGroup];
 }
 
-/// Demande le changement de couleur d'une boîte : recalcule
+/// Demande le changement de couleur d'une lipo : recalcule
 /// automatiquement le chronomètre associé.
 class ChangeBoxColorRequested extends BoxEvent {
   final String boxId;
@@ -75,7 +75,7 @@ class ChangeBoxColorRequested extends BoxEvent {
   List<Object?> get props => <Object?>[boxId, newColor];
 }
 
-/// Demande la suppression d'une boîte.
+/// Demande la suppression d'une lipo.
 class DeleteBoxRequested extends BoxEvent {
   final String boxId;
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Représente les trois couleurs possibles d'une boîte.
-/// Chaque couleur détermine la durée du chronomètre associé à la boîte.
+/// Représente les trois couleurs possibles d'une lipo.
+/// Chaque couleur détermine la durée du chronomètre associé à la lipo.
 enum BoxColorType {
   red,
   green,
@@ -19,7 +19,7 @@ enum BoxColorType {
     }
   }
 
-  /// Couleur Material associée, utilisée pour l'affichage de la boîte.
+  /// Couleur Material associée, utilisée pour l'affichage de la lipo.
   Color get materialColor {
     switch (this) {
       case BoxColorType.red:

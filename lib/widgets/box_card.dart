@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/box_model.dart';
 import 'countdown_timer_widget.dart';
 
-/// Carte représentant une boîte dans les listes de l'application.
+/// Carte représentant une lipo dans les listes de l'application.
 class BoxCard extends StatelessWidget {
   final BoxModel box;
   final VoidCallback onTap;

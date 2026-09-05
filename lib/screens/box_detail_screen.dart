@@ -13,7 +13,7 @@ import '../widgets/confirm_delete_dialog.dart';
 import '../widgets/countdown_timer_widget.dart';
 import 'add_edit_box_screen.dart';
 
-/// Écran de détail d'une boîte : affiche ses informations, permet de
+/// Écran de détail d'une lipo : affiche ses informations, permet de
 /// changer sa couleur, de la modifier ou de la supprimer.
 class BoxDetailScreen extends StatelessWidget {
   final String boxId;
@@ -37,8 +37,8 @@ class BoxDetailScreen extends StatelessWidget {
   Future<void> _confirmDelete(BuildContext context, BoxModel box) async {
     final bool confirmed = await ConfirmDeleteDialog.show(
       context,
-      title: 'Supprimer la boîte',
-      message: 'La boîte "${box.name}" sera définitivement supprimée.',
+      title: 'Supprimer la lipo',
+      message: 'La lipo "${box.name}" sera définitivement supprimée.',
     );
     if (confirmed && context.mounted) {
       context.read<BoxBloc>().add(DeleteBoxRequested(box.id));
@@ -72,9 +72,9 @@ class BoxDetailScreen extends StatelessWidget {
 
         if (box == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Boîte introuvable')),
+            appBar: AppBar(title: const Text('Lipo introuvable')),
             body: const Center(
-              child: Text('Cette boîte a peut-être été supprimée.'),
+              child: Text('Cette lipo a peut-être été supprimée.'),
             ),
           );
         }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/box_group_model.dart';
 
 /// Sélecteur optionnel de groupe, utilisé lors de la création ou de
-/// la modification d'une boîte.
+/// la modification d'une lipo.
 class GroupSelectorField extends StatelessWidget {
   final List<BoxGroupModel> groups;
   final String? selectedGroupId;

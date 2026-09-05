@@ -1,16 +1,16 @@
 # Organizer App
 
-Application Flutter d'organisation par **boîtes** colorées, regroupables en
+Application Flutter d'organisation par **lipos** colorées, regroupables en
 **groupes**, chacune disposant d'un **chronomètre/alarme** dont la durée
 dépend de sa couleur.
 
 ## Fonctionnalités
 
-1. Création de boîtes représentées par une icône (choisie dans un catalogue).
-2. Changement de couleur (Rouge / Vert / Jaune) et modification d'une boîte
+1. Création de lipos représentées par une icône (choisie dans un catalogue).
+2. Changement de couleur (Rouge / Vert / Jaune) et modification d'une lipo
    existante (nom, icône, groupe).
-3. Création de groupes de boîtes.
-4. Chaque boîte possède un chronomètre dont la durée dépend de sa couleur :
+3. Création de groupes de lipos.
+4. Chaque lipo possède un chronomètre dont la durée dépend de sa couleur :
    - 🔴 Rouge : 1 jour
    - 🟡 Jaune : 7 jours
    - 🟢 Vert : 14 jours
@@ -33,7 +33,7 @@ flutter run --no-tree-shake-icons
 ```
 
 > ⚠️ Le drapeau `--no-tree-shake-icons` est nécessaire car les icônes des
-> boîtes sont stockées par `codePoint` et reconstruites dynamiquement à
+> lipos sont stockées par `codePoint` et reconstruites dynamiquement à
 > l'exécution (voir section "Choix techniques notables" ci-dessous).
 
 ## Architecture générale
@@ -69,7 +69,7 @@ lib/
 
 - `DatabaseHelper` : encapsule l'ouverture et la structure de la base
   SQLite (deux tables : `boxes` et `groups`, avec une clé étrangère
-  `ON DELETE SET NULL` pour ne jamais perdre une boîte si son groupe
+  `ON DELETE SET NULL` pour ne jamais perdre une lipo si son groupe
   disparaît).
 - `BoxRepository` / `GroupRepository` : exposent des méthodes métier
   (`fetchAll`, `insert`, `update`, `delete`, `changeColor`,
@@ -99,18 +99,18 @@ Chaque état d'erreur conserve la **dernière liste connue** (`previousBoxes`
 données précédentes à l'écran, accompagnées d'un message d'erreur (snackbar),
 plutôt qu'un écran vidé brutalement.
 
-La suppression d'un groupe déclenche d'abord `detachFromGroup` (les boîtes
-deviennent "sans groupe") **avant** la suppression du groupe : aucune boîte
+La suppression d'un groupe déclenche d'abord `detachFromGroup` (les lipos
+deviennent "sans groupe") **avant** la suppression du groupe : aucune lipo
 n'est jamais supprimée involontairement.
 
 ### 4. Couches `screens/` et `widgets/`
 
-- `HomeScreen` : deux onglets (Boîtes sans groupe / Groupes), écoute les
+- `HomeScreen` : deux onglets (Lipos sans groupe / Groupes), écoute les
   deux BLoC via `BlocListener` imbriqués pour afficher les erreurs.
 - `AddEditBoxScreen` : formulaire unique pour créer **et** modifier une
-  boîte (mode déterminé par la présence de `existingBox`).
+  lipo (mode déterminé par la présence de `existingBox`).
 - `BoxDetailScreen` / `GroupDetailScreen` : détail et actions
-  (modifier/supprimer une boîte, changer sa couleur en direct).
+  (modifier/supprimer une lipo, changer sa couleur en direct).
 - Les `widgets/` (cartes, sélecteurs, dialogues, état vide) sont purement
   présentatifs et ne connaissent aucun BLoC directement : ils reçoivent des
   callbacks, ce qui les rend testables et réutilisables indépendamment.
@@ -127,7 +127,7 @@ données pendant toute la navigation.
   les champs secondaires (icône, dates) reçoivent des valeurs par défaut
   sûres plutôt que de faire planter l'application.
 - **Absence de réseau** : `NetworkInfo` + `NoNetworkException`.
-- **Éléments introuvables** : `NotFoundException` (ex : modifier une boîte
+- **Éléments introuvables** : `NotFoundException` (ex : modifier une lipo
   supprimée entre-temps depuis un autre écran).
 - **Formulaires** : validation systématique des noms (vide, longueur
   maximale) avant tout appel réseau/BDD.
@@ -145,7 +145,7 @@ données pendant toute la navigation.
   à la création, l'expiration est calculée depuis la date de création.
   Lors d'un **changement manuel de couleur**, l'expiration est recalculée
   à partir de l'instant du changement (et non de la création initiale),
-  ce qui correspond au comportement attendu (ex : faire passer une boîte
+  ce qui correspond au comportement attendu (ex : faire passer une lipo
   au rouge redémarre bien un délai de 1 jour à partir de maintenant).
 - **`http` dans les dépendances** : présent mais non utilisé pour
   l'instant ; réservé à une future synchronisation distante
@@ -159,7 +159,7 @@ données pendant toute la navigation.
 ## Évolutions futures possibles
 
 - Notifications système (via `flutter_local_notifications`) lorsqu'une
-  boîte expire, en complément du compte à rebours visuel actuel.
+  lipo expire, en complément du compte à rebours visuel actuel.
 - Synchronisation distante réelle via `http` (le point d'entrée
   `syncWithRemote` est déjà prêt).
-- Tri/filtrage des boîtes par couleur ou par échéance.
+- Tri/filtrage des lipos par couleur ou par échéance.

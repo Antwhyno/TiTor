@@ -26,14 +26,14 @@ class NotificationService {
         ?.requestNotificationsPermission();
   }
 
-  /// Génère un entier 32-bit stable à partir de l'UUID de la boîte
+  /// Génère un entier 32-bit stable à partir de l'UUID de la lipo
   static int _generateNotificationId(String boxId) {
     return boxId.hashCode & 0x7FFFFFFF;
   }
 
-  /// Programme une notification système à la date d'expiration de la boîte
+  /// Programme une notification système à la date d'expiration de la lipo
   static Future<void> scheduleBoxExpiration(BoxModel box) async {
-    // Si la boîte est déjà expirée, on ne planifie rien
+    // Si la lipo est déjà expirée, on ne planifie rien
     if (box.isExpired()) return;
 
     final int notificationId = _generateNotificationId(box.id);
@@ -43,9 +43,9 @@ class NotificationService {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
       'box_expiration_channel',
-      'Expiration des Boîtes',
+      'Expiration des Lipos',
       channelDescription:
-          'Alertes déclenchées à l\'expiration d\'une boîte TiTor',
+          'Alertes déclenchées à l\'expiration d\'une lipo TiTor',
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
@@ -56,8 +56,8 @@ class NotificationService {
 
     await _notificationsPlugin.zonedSchedule(
       notificationId,
-      'Boîte expirée ! 📦',
-      'Le délai pour votre boîte "${box.name}" est arrivé à terme.',
+      'Lipo expirée ! 📦',
+      'Le délai pour votre lipo "${box.name}" est arrivé à terme.',
       scheduledDate,
       notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -66,7 +66,7 @@ class NotificationService {
     );
   }
 
-  /// Annule la notification programmée associée à une boîte
+  /// Annule la notification programmée associée à une lipo
   static Future<void> cancelBoxNotification(String boxId) async {
     final int notificationId = _generateNotificationId(boxId);
     await _notificationsPlugin.cancel(notificationId);

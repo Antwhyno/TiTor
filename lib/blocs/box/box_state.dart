@@ -15,22 +15,22 @@ class BoxInitial extends BoxState {
   const BoxInitial();
 }
 
-/// Chargement des boîtes en cours.
+/// Chargement des lipos en cours.
 class BoxLoading extends BoxState {
   const BoxLoading();
 }
 
-/// Boîtes chargées avec succès.
+/// Lipos chargées avec succès.
 class BoxLoaded extends BoxState {
   final List<BoxModel> boxes;
 
   const BoxLoaded(this.boxes);
 
-  /// Boîtes n'appartenant à aucun groupe.
+  /// Lipos n'appartenant à aucun groupe.
   List<BoxModel> get ungroupedBoxes =>
       boxes.where((BoxModel box) => box.groupId == null).toList();
 
-  /// Boîtes appartenant à un groupe donné.
+  /// Lipos appartenant à un groupe donné.
   List<BoxModel> boxesInGroup(String groupId) => boxes
       .where((BoxModel box) => box.groupId == groupId)
       .toList(growable: false);
@@ -39,7 +39,7 @@ class BoxLoaded extends BoxState {
   List<Object?> get props => <Object?>[boxes];
 }
 
-/// Une erreur est survenue lors d'une opération sur les boîtes.
+/// Une erreur est survenue lors d'une opération sur les lipos.
 ///
 /// [previousBoxes] permet de conserver l'affichage existant à l'écran
 /// pendant qu'un message d'erreur est présenté (ex: snackbar), plutôt

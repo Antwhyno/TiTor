@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/box_color_type.dart';
 
-/// Sélecteur des trois couleurs disponibles pour une boîte, sous
+/// Sélecteur des trois couleurs disponibles pour une lipo, sous
 /// forme de puces (chips) indiquant la durée du chronomètre associée.
 class ColorPickerField extends StatelessWidget {
   final BoxColorType selected;

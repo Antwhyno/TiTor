@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-/// Modèle représentant un groupe de boîtes.
+/// Modèle représentant un groupe de lipos.
 @immutable
 class BoxGroupModel {
   final String id;

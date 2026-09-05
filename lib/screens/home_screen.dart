@@ -19,7 +19,7 @@ import 'box_detail_screen.dart';
 import 'group_detail_screen.dart';
 
 /// Écran principal de l'application, organisé en deux onglets : la
-/// liste des boîtes sans groupe et la liste des groupes.
+/// liste des lipos sans groupe et la liste des groupes.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -118,8 +118,8 @@ class _HomeScreenState extends State<HomeScreen>
     final bool confirmed = await ConfirmDeleteDialog.show(
       context,
       title: 'Supprimer le groupe',
-      message: 'Le groupe "${group.name}" sera supprimé. Ses boîtes seront '
-          'conservées et deviendront des boîtes sans groupe.',
+      message: 'Le groupe "${group.name}" sera supprimé. Ses lipos seront '
+          'conservées et deviendront des lipos sans groupe.',
     );
     if (confirmed && context.mounted) {
       context.read<GroupBloc>().add(DeleteGroupRequested(group.id));
@@ -134,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen>
         bottom: TabBar(
           controller: _tabController,
           tabs: const <Widget>[
-            Tab(text: 'Boîtes', icon: Icon(Icons.inbox_outlined)),
+            Tab(text: 'Lipos', icon: Icon(Icons.inbox_outlined)),
             Tab(text: 'Groupes', icon: Icon(Icons.folder_copy_outlined)),
           ],
         ),
@@ -186,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen>
             onPressed: () =>
                 isBoxesTab ? _openAddBoxScreen(context) : _createGroup(context),
             icon: const Icon(Icons.add),
-            label: Text(isBoxesTab ? 'Nouvelle boîte' : 'Nouveau groupe'),
+            label: Text(isBoxesTab ? 'Nouvelle lipo' : 'Nouveau groupe'),
           );
         },
       ),
@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 }
 
-/// Onglet listant les boîtes sans groupe.
+/// Onglet listant les lipos sans groupe.
 class _BoxesTab extends StatelessWidget {
   final ValueChanged<BoxModel> onBoxTap;
 
@@ -219,7 +219,7 @@ class _BoxesTab extends StatelessWidget {
         if (boxes.isEmpty) {
           return const EmptyState(
             icon: Icons.inbox_outlined,
-            message: "Aucune boîte pour l'instant.\n"
+            message: "Aucune lipo pour l'instant.\n"
                 "Touchez le bouton '+' pour en créer une.",
           );
         }
@@ -240,7 +240,7 @@ class _BoxesTab extends StatelessWidget {
   }
 }
 
-/// Onglet listant les groupes de boîtes.
+/// Onglet listant les groupes de lipos.
 class _GroupsTab extends StatelessWidget {
   final VoidCallback onCreateGroup;
   final ValueChanged<BoxGroupModel> onGroupTap;

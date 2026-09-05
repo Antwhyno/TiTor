@@ -11,7 +11,7 @@ import '../widgets/box_card.dart';
 import '../widgets/empty_state.dart';
 import 'box_detail_screen.dart';
 
-/// Écran de détail d'un groupe : liste les boîtes qu'il contient.
+/// Écran de détail d'un groupe : liste les lipos qu'il contient.
 class GroupDetailScreen extends StatelessWidget {
   final String groupId;
 
@@ -75,7 +75,7 @@ class GroupDetailScreen extends StatelessWidget {
                     if (boxes.isEmpty) {
                       return const EmptyState(
                         icon: Icons.inbox_outlined,
-                        message: 'Ce groupe ne contient aucune boîte.',
+                        message: 'Ce groupe ne contient aucune lipo.',
                       );
                     }
 
