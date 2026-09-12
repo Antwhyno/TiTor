@@ -11,6 +11,7 @@ import '../models/box_group_model.dart';
 import '../models/box_model.dart';
 import '../widgets/color_picker_field.dart';
 import '../widgets/group_selector_field.dart';
+import '../widgets/icon_color_picker_field.dart';
 
 class AddEditBoxScreen extends StatefulWidget {
   final BoxModel? existingBox;
@@ -28,6 +29,7 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
   late final TextEditingController _hoursController;
   late IconData _selectedIcon;
   late BoxColorType _selectedColor;
+  Color? _selectedIconColor;
   String? _selectedGroupId;
 
   bool get _isEditing => widget.existingBox != null;
@@ -39,6 +41,7 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
     _nameController = TextEditingController(text: box?.name ?? '');
     _selectedIcon = box?.icon ?? Icons.inbox;
     _selectedColor = box?.color ?? BoxColorType.yellow;
+    _selectedIconColor = box?.iconColor;
     _selectedGroupId = box?.groupId;
 
     // Initialisation des champs de durée
@@ -116,6 +119,7 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
           color: _selectedColor,
           groupId: _selectedGroupId,
           customDuration: customDuration,
+          iconColor: _selectedIconColor,
         ),
       );
     } else {
@@ -127,6 +131,7 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
           color: _selectedColor,
           groupId: _selectedGroupId,
           clearGroup: _selectedGroupId == null,
+          iconColor: _selectedIconColor,
         ),
       );
     }
@@ -206,8 +211,41 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
                 const SizedBox(height: 24),
 
                 Text(
-                  'Couleur',
+                  'Couleur de l\'icône',
                   style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Choisissez n\'importe quelle couleur pour l\'icône. Si '
+                  'vous n\'en choisissez pas, elle sera affichée avec un '
+                  'dégradé de blancs par défaut.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 12),
+                Center(
+                  child: _IconPreview(
+                    icon: _selectedIcon,
+                    color: _selectedIconColor,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                IconColorPickerField(
+                  selected: _selectedIconColor,
+                  onChanged: (Color? color) {
+                    setState(() => _selectedIconColor = color);
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                Text(
+                  'Catégorie (durée du chronomètre)',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Sans effet sur la couleur de l\'icône : sert uniquement '
+                  'à préremplir une durée de chronomètre courante.',
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 8),
                 ColorPickerField(
@@ -233,6 +271,44 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// Aperçu de l'icône avec sa couleur (ou le dégradé blanc par défaut),
+/// utilisé pendant la création/modification, avant qu'une [BoxModel]
+/// complète n'existe.
+class _IconPreview extends StatelessWidget {
+  final IconData icon;
+  final Color? color;
+
+  const _IconPreview({required this.icon, required this.color});
+
+  static const Gradient _defaultGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: <Color>[Colors.white, Color(0xFFE0E0E0)],
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 64,
+      height: 64,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color?.withValues(alpha: 0.2),
+        gradient: color == null ? _defaultGradient : null,
+        border: color == null
+            ? Border.all(color: const Color(0xFFBDBDBD))
+            : null,
+      ),
+      child: Icon(
+        icon,
+        size: 32,
+        color: color ?? const Color(0xFF757575),
       ),
     );
   }

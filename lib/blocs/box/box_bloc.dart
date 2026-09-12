@@ -77,6 +77,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
         groupId: event.groupId,
         customDuration:
             event.customDuration, // 1. Prise en compte de la durée saisie
+        iconColor: event.iconColor,
       );
 
       await _repository.insert(newBox);
@@ -124,6 +125,8 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
         clearIconFontPackage: event.icon.fontPackage == null,
         groupId: event.groupId,
         clearGroup: event.clearGroup,
+        iconColorValue: event.iconColor?.toARGB32(),
+        clearIconColor: event.iconColor == null,
       );
       final BoxModel finalBox = updatedBox.color == event.color
           ? updatedBox

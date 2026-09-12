@@ -21,7 +21,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
   static const String _databaseName = 'organizer_app.db';
-  static const int _databaseVersion = 2;
+  static const int _databaseVersion = 3;
 
   static const String tableBoxes = 'boxes';
   static const String tableGroups = 'groups';
@@ -79,6 +79,7 @@ class DatabaseHelper {
         created_at TEXT NOT NULL,
         expires_at TEXT NOT NULL,
         manual_color INTEGER,
+        icon_color INTEGER,
         FOREIGN KEY (group_id) REFERENCES $tableGroups (id)
           ON DELETE SET NULL
       )
@@ -91,10 +92,19 @@ class DatabaseHelper {
   /// l'utilisateur de forcer manuellement la couleur d'une lipo,
   /// plutôt que de laisser la couleur être calculée automatiquement
   /// selon la proximité de la date d'expiration.
+  ///
+  /// Version 3 : ajout de la colonne `icon_color`, qui permet de
+  /// choisir librement la couleur de l'icône d'une lipo à sa création
+  /// (au lieu de se limiter aux trois couleurs rouge/jaune/vert).
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await db.execute(
         'ALTER TABLE $tableBoxes ADD COLUMN manual_color INTEGER',
+      );
+    }
+    if (oldVersion < 3) {
+      await db.execute(
+        'ALTER TABLE $tableBoxes ADD COLUMN icon_color INTEGER',
       );
     }
   }

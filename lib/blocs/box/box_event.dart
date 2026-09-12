@@ -24,17 +24,22 @@ class AddBoxRequested extends BoxEvent {
   final String? groupId;
   final Duration? customDuration; // <-- Nouveau champ optionnel
 
+  /// Couleur libre choisie pour l'icône (`null` = dégradé blanc par
+  /// défaut).
+  final Color? iconColor;
+
   const AddBoxRequested({
     required this.name,
     required this.icon,
     required this.color,
     this.groupId,
     this.customDuration, // <-- Paramètre optionnel
+    this.iconColor,
   });
 
   @override
   List<Object?> get props =>
-      <Object?>[name, icon, color, groupId, customDuration];
+      <Object?>[name, icon, color, groupId, customDuration, iconColor];
 }
 
 /// Demande la modification d'une lipo existante (nom, icône, groupe).
@@ -46,6 +51,10 @@ class UpdateBoxRequested extends BoxEvent {
   final String? groupId;
   final bool clearGroup;
 
+  /// Couleur libre choisie pour l'icône (`null` = dégradé blanc par
+  /// défaut).
+  final Color? iconColor;
+
   const UpdateBoxRequested({
     required this.boxId,
     required this.name,
@@ -53,11 +62,12 @@ class UpdateBoxRequested extends BoxEvent {
     required this.color,
     this.groupId,
     this.clearGroup = false,
+    this.iconColor,
   });
 
   @override
   List<Object?> get props =>
-      <Object?>[boxId, name, icon, color, groupId, clearGroup];
+      <Object?>[boxId, name, icon, color, groupId, clearGroup, iconColor];
 }
 
 /// Demande le changement de couleur d'une lipo : recalcule
