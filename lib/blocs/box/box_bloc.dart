@@ -27,7 +27,6 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     on<LoadBoxes>(_onLoadBoxes);
     on<AddBoxRequested>(_onAddBoxRequested);
     on<UpdateBoxRequested>(_onUpdateBoxRequested);
-    on<ChangeBoxColorRequested>(_onChangeBoxColorRequested);
     on<ChangeBoxManualColorRequested>(_onChangeBoxManualColorRequested);
     on<DeleteBoxRequested>(_onDeleteBoxRequested);
   }
@@ -77,6 +76,7 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
         groupId: event.groupId,
         customDuration:
             event.customDuration, // 1. Prise en compte de la durée saisie
+        iconColor: event.iconColor,
       );
 
       await _repository.insert(newBox);
@@ -124,6 +124,8 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
         clearIconFontPackage: event.icon.fontPackage == null,
         groupId: event.groupId,
         clearGroup: event.clearGroup,
+        iconColorValue: event.iconColor?.toARGB32(),
+        clearIconColor: event.iconColor == null,
       );
       final BoxModel finalBox = updatedBox.color == event.color
           ? updatedBox
@@ -143,42 +145,6 @@ class BoxBloc extends Bloc<BoxEvent, BoxState> {
     } on Exception {
       emit(BoxError(
         message: 'Impossible de mettre à jour la lipo.',
-        previousBoxes: boxes,
-      ));
-    }
-  }
-
-  Future<void> _onChangeBoxColorRequested(
-    ChangeBoxColorRequested event,
-    Emitter<BoxState> emit,
-  ) async {
-    final List<BoxModel> boxes = _currentBoxes;
-    final int index = boxes.indexWhere((BoxModel box) => box.id == event.boxId);
-    if (index == -1) {
-      emit(BoxError(
-        message: 'La lipo est introuvable.',
-        previousBoxes: boxes,
-      ));
-      return;
-    }
-    try {
-      final BoxModel updatedBox = await _repository.changeColor(
-        boxes[index],
-        event.newColor,
-      );
-
-      // Reprogrammation de l'alarme suite au changement de durée associé à la couleur
-      await NotificationService.cancelBoxNotification(updatedBox.id);
-      await NotificationService.scheduleBoxExpiration(updatedBox);
-
-      final List<BoxModel> newBoxes = List<BoxModel>.from(boxes);
-      newBoxes[index] = updatedBox;
-      emit(BoxLoaded(newBoxes));
-    } on AppException catch (error) {
-      emit(BoxError(message: error.message, previousBoxes: boxes));
-    } on Exception {
-      emit(BoxError(
-        message: 'Impossible de changer la couleur de la lipo.',
         previousBoxes: boxes,
       ));
     }

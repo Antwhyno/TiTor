@@ -6,12 +6,11 @@ import '../blocs/box/box_bloc.dart';
 import '../blocs/box/box_event.dart';
 import '../blocs/box/box_state.dart';
 import '../blocs/group/group_bloc.dart';
-import '../models/box_color_type.dart';
 import '../models/box_model.dart';
 import '../widgets/box_color_ticker.dart';
-import '../widgets/color_picker_field.dart';
 import '../widgets/confirm_delete_dialog.dart';
 import '../widgets/countdown_timer_widget.dart';
+import '../widgets/lipo_icon_avatar.dart';
 import '../widgets/manual_color_picker_field.dart';
 import 'add_edit_box_screen.dart';
 
@@ -111,19 +110,27 @@ class BoxDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Center(
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundColor:
-                            box.color.materialColor.withValues(alpha: 0.2),
-                        child: Icon(
-                          box.icon,
-                          size: 40,
-                          color: box.color.materialColor,
-                        ),
-                      ),
+                      child: LipoIconAvatar(box: box, radius: 40),
                     ),
                   );
                 },
+              ),
+              const SizedBox(height: 8),
+              Center(
+                child: Text(
+                  box.hasIconColor
+                      ? 'Couleur de l\'icône personnalisée'
+                      : 'Icône en dégradé blanc (couleur non choisie)',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Center(
+                child: TextButton.icon(
+                  onPressed: () => _openEditScreen(context, box),
+                  icon: const Icon(Icons.palette_outlined, size: 18),
+                  label: const Text('Changer la couleur de l\'icône'),
+                ),
               ),
               const SizedBox(height: 16),
               Center(child: CountdownTimerWidget(expiresAt: box.expiresAt)),
@@ -137,22 +144,6 @@ class BoxDetailScreen extends StatelessWidget {
                 value: dateFormat.format(box.expiresAt),
               ),
               const SizedBox(height: 24),
-              Text('Couleur', style: Theme.of(context).textTheme.titleSmall),
-              const SizedBox(height: 8),
-              ColorPickerField(
-                selected: box.color,
-                onChanged: (BoxColorType newColor) {
-                  if (newColor != box.color) {
-                    context.read<BoxBloc>().add(
-                          ChangeBoxColorRequested(
-                            boxId: box.id,
-                            newColor: newColor,
-                          ),
-                        );
-                  }
-                },
-              ),
-              const SizedBox(height: 24),
               Text(
                 'Couleur de fond',
                 style: Theme.of(context).textTheme.titleSmall,
@@ -161,9 +152,8 @@ class BoxDetailScreen extends StatelessWidget {
               Text(
                 'Par défaut, la couleur de fond de cette lipo évolue '
                 'automatiquement à mesure que la date d\'expiration '
-                'approche (du vert au rouge). L\'icône, elle, garde '
-                'toujours la couleur choisie ci-dessus. Vous pouvez '
-                'forcer la couleur de fond manuellement ci-dessous.',
+                'approche (du vert au rouge). Vous pouvez forcer une '
+                'couleur de fond manuellement ci-dessous.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/box_model.dart';
 import 'box_color_ticker.dart';
 import 'countdown_timer_widget.dart';
+import 'lipo_icon_avatar.dart';
 
 /// Carte représentant une lipo dans les listes de l'application.
 class BoxCard extends StatelessWidget {
@@ -13,11 +14,6 @@ class BoxCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Couleur choisie à la création de la lipo (catégorie rouge/jaune/vert
-    // liée à la durée du chronomètre) : reste fixe sur l'icône, quel que
-    // soit le temps qui passe.
-    final Color iconColor = box.color.materialColor;
-
     return BoxColorTicker(
       box: box,
       builder: (BuildContext context, Color proximityColor) {
@@ -37,11 +33,7 @@ class BoxCard extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: <Widget>[
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: iconColor.withValues(alpha: 0.2),
-                    child: Icon(box.icon, color: iconColor),
-                  ),
+                  LipoIconAvatar(box: box, radius: 24),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(

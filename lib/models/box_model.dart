@@ -24,6 +24,12 @@ class BoxModel {
   /// automatiquement en fonction du temps restant avant expiration.
   final int? manualColorValue;
 
+  /// Couleur libre de l'icône, choisie par l'utilisateur à la création
+  /// de la lipo (valeur ARGB). `null` signifie qu'aucune couleur n'a
+  /// été choisie : l'icône est alors affichée avec un dégradé de
+  /// blancs par défaut.
+  final int? iconColorValue;
+
   BoxModel({
     required this.id,
     required this.name,
@@ -35,6 +41,7 @@ class BoxModel {
     required this.createdAt,
     required this.expiresAt,
     this.manualColorValue,
+    this.iconColorValue,
   }) {
     // Validation des invariants (Programmation défensive)
     if (id.trim().isEmpty) {
@@ -61,6 +68,7 @@ class BoxModel {
     String? groupId,
     DateTime? now,
     Duration? customDuration,
+    Color? iconColor,
   }) {
     final DateTime creationDate = now ?? DateTime.now();
     final Duration duration = customDuration ?? color.reminderDuration;
@@ -75,6 +83,7 @@ class BoxModel {
       createdAt: creationDate,
       expiresAt: creationDate
           .add(duration), // <-- Utilise la variable duration calculée
+      iconColorValue: iconColor?.toARGB32(),
     );
   }
 
@@ -102,10 +111,21 @@ class BoxModel {
   Color? get manualColor =>
       manualColorValue != null ? Color(manualColorValue!) : null;
 
+  /// Indique si une couleur d'icône a été choisie par l'utilisateur à
+  /// la création (ou modifiée depuis). Si `false`, l'icône doit être
+  /// affichée avec le dégradé de blancs par défaut.
+  bool get hasIconColor => iconColorValue != null;
+
+  /// Couleur libre de l'icône, reconstituée depuis sa valeur ARGB
+  /// stockée, ou `null` si aucune couleur n'a été choisie (dégradé de
+  /// blancs par défaut).
+  Color? get iconColor =>
+      iconColorValue != null ? Color(iconColorValue!) : null;
+
   /// Couleur de fond à afficher pour cette lipo (carte, panneau...).
   ///
   /// Ne concerne pas la couleur de l'icône, qui reste toujours celle
-  /// choisie à la création ([color.materialColor]). Si l'utilisateur a
+  /// choisie à la création ([iconColor]). Si l'utilisateur a
   /// choisi une couleur de fond manuellement, celle-ci est utilisée
   /// telle quelle. Sinon, la couleur est calculée automatiquement :
   /// plus la lipo approche de sa date d'expiration (recharge à venir),
@@ -135,6 +155,17 @@ class BoxModel {
     return copyWith(clearManualColor: true);
   }
 
+  /// Crée une copie avec une couleur d'icône forcée.
+  BoxModel withIconColor(Color color) {
+    return copyWith(iconColorValue: color.toARGB32());
+  }
+
+  /// Crée une copie sans couleur d'icône choisie : l'icône revient au
+  /// dégradé de blancs par défaut.
+  BoxModel clearIconColor() {
+    return copyWith(clearIconColor: true);
+  }
+
   /// Crée une copie de l'instance en modifiant certains champs.
   ///
   /// Utilisez [clearIconFontPackage] à true pour effacer le package d'icône.
@@ -153,6 +184,8 @@ class BoxModel {
     DateTime? expiresAt,
     int? manualColorValue,
     bool clearManualColor = false,
+    int? iconColorValue,
+    bool clearIconColor = false,
   }) {
     final BoxColorType newColor = color ?? this.color;
 
@@ -178,6 +211,9 @@ class BoxModel {
       manualColorValue: clearManualColor
           ? null
           : (manualColorValue ?? this.manualColorValue),
+      iconColorValue: clearIconColor
+          ? null
+          : (iconColorValue ?? this.iconColorValue),
     );
   }
 
@@ -202,6 +238,7 @@ class BoxModel {
       'created_at': createdAt.toIso8601String(),
       'expires_at': expiresAt.toIso8601String(),
       'manual_color': manualColorValue,
+      'icon_color': iconColorValue,
     };
   }
 
@@ -250,6 +287,11 @@ class BoxModel {
         ? rawManualColor
         : (rawManualColor is String ? int.tryParse(rawManualColor) : null);
 
+    final Object? rawIconColor = map['icon_color'];
+    final int? iconColorValue = rawIconColor is int
+        ? rawIconColor
+        : (rawIconColor is String ? int.tryParse(rawIconColor) : null);
+
     return BoxModel(
       id: rawId,
       name: rawName,
@@ -261,6 +303,7 @@ class BoxModel {
       createdAt: createdAt,
       expiresAt: expiresAt,
       manualColorValue: manualColorValue,
+      iconColorValue: iconColorValue,
     );
   }
 
