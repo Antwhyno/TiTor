@@ -9,7 +9,6 @@ import '../blocs/group/group_state.dart';
 import '../models/box_color_type.dart';
 import '../models/box_group_model.dart';
 import '../models/box_model.dart';
-import '../widgets/color_picker_field.dart';
 import '../widgets/group_selector_field.dart';
 import '../widgets/icon_color_picker_field.dart';
 
@@ -40,7 +39,7 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
     final BoxModel? box = widget.existingBox;
     _nameController = TextEditingController(text: box?.name ?? '');
     _selectedIcon = box?.icon ?? Icons.inbox;
-    _selectedColor = box?.color ?? BoxColorType.yellow;
+    _selectedColor = box?.color ?? BoxColorType.standard;
     _selectedIconColor = box?.iconColor;
     _selectedGroupId = box?.groupId;
 
@@ -54,8 +53,9 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
         text: (absolute.inHours % 24).toString(),
       );
     } else {
-      // Valeurs par défaut pour une nouvelle lipo (ex: 7 jours, 0 heure)
-      _daysController = TextEditingController(text: '7');
+      // Valeur par défaut pour une nouvelle lipo : 15 jours (durée
+      // unique par défaut, ajustable manuellement ci-dessous).
+      _daysController = TextEditingController(text: '15');
       _hoursController = TextEditingController(text: '0');
     }
   }
@@ -233,25 +233,6 @@ class _AddEditBoxScreenState extends State<AddEditBoxScreen> {
                   selected: _selectedIconColor,
                   onChanged: (Color? color) {
                     setState(() => _selectedIconColor = color);
-                  },
-                ),
-                const SizedBox(height: 24),
-
-                Text(
-                  'Catégorie (durée du chronomètre)',
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Sans effet sur la couleur de l\'icône : sert uniquement '
-                  'à préremplir une durée de chronomètre courante.',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 8),
-                ColorPickerField(
-                  selected: _selectedColor,
-                  onChanged: (BoxColorType color) {
-                    setState(() => _selectedColor = color);
                   },
                 ),
                 const SizedBox(height: 24),

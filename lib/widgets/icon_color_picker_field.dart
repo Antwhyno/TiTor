@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Sélecteur de couleur libre pour l'icône d'une lipo.
 ///
-/// Contrairement à [ColorPickerField] (qui ne propose que trois
-/// couleurs liées à la durée du chronomètre), ce sélecteur permet de
+/// Contrairement à un sélecteur à choix limité, ce sélecteur permet de
 /// choisir n'importe quelle couleur pour l'icône : quelques teintes
 /// rapides, un code couleur hexadécimal, ou des curseurs rouge/vert/
 /// bleu. Ne rien choisir laisse l'icône avec un dégradé de blancs par

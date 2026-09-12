@@ -6,10 +6,8 @@ import '../blocs/box/box_bloc.dart';
 import '../blocs/box/box_event.dart';
 import '../blocs/box/box_state.dart';
 import '../blocs/group/group_bloc.dart';
-import '../models/box_color_type.dart';
 import '../models/box_model.dart';
 import '../widgets/box_color_ticker.dart';
-import '../widgets/color_picker_field.dart';
 import '../widgets/confirm_delete_dialog.dart';
 import '../widgets/countdown_timer_widget.dart';
 import '../widgets/lipo_icon_avatar.dart';
@@ -144,32 +142,6 @@ class BoxDetailScreen extends StatelessWidget {
               _InfoRow(
                 label: 'Expire le',
                 value: dateFormat.format(box.expiresAt),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Catégorie (durée du chronomètre)',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Change uniquement la durée par défaut du chronomètre '
-                'associée à cette catégorie. Sans effet sur l\'icône ni '
-                'sur la couleur de fond.',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 8),
-              ColorPickerField(
-                selected: box.color,
-                onChanged: (BoxColorType newColor) {
-                  if (newColor != box.color) {
-                    context.read<BoxBloc>().add(
-                          ChangeBoxColorRequested(
-                            boxId: box.id,
-                            newColor: newColor,
-                          ),
-                        );
-                  }
-                },
               ),
               const SizedBox(height: 24),
               Text(

@@ -70,21 +70,6 @@ class UpdateBoxRequested extends BoxEvent {
       <Object?>[boxId, name, icon, color, groupId, clearGroup, iconColor];
 }
 
-/// Demande le changement de couleur d'une lipo : recalcule
-/// automatiquement le chronomètre associé.
-class ChangeBoxColorRequested extends BoxEvent {
-  final String boxId;
-  final BoxColorType newColor;
-
-  const ChangeBoxColorRequested({
-    required this.boxId,
-    required this.newColor,
-  });
-
-  @override
-  List<Object?> get props => <Object?>[boxId, newColor];
-}
-
 /// Demande le changement de la couleur manuelle d'affichage d'une
 /// lipo (indépendante de la catégorie [BoxColorType] et de la durée
 /// du chronomètre). Ne modifie ni la durée, ni la date d'expiration.
